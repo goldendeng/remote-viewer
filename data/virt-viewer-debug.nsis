@@ -1,0 +1,49 @@
+#!Nsis Installer Command Script
+# data/virt-viewer-debug.nsis.  Generated from virt-viewer-debug.nsis.in by configure.
+# To build an installer from the script you would normally do:
+#
+#   makensis virt-viewer-debug.nsis
+#
+# which will generate the output file 'virt-viewer-2.0.exe' which is a Windows
+# installer containing your program.
+
+Name "VirtViewer Debug 2.0"
+OutFile "virt-viewer-debug-2.0.exe"
+InstallDir "$LOCALAPPDATA\virt-viewer"
+InstallDirRegKey HKCU "Software\virt-viewer" ""
+
+RequestExecutionLevel user
+SetCompressor bzip2
+ShowInstDetails hide
+ShowUninstDetails hide
+XPStyle on
+
+Page instfiles
+
+Section "VirtViewer Debug"
+  SectionIn RO
+  WriteRegStr HKCU "Software\virt-viewer" "" $INSTDIR
+
+  SetOutPath "$INSTDIR"
+
+  SetOutPath "$INSTDIR\bin"
+  File "/usr/local/bin/gdb.exe"
+  File "/usr/local/bin/gdbserver.exe"
+  File "${DESTDIR}/usr/local/bin/debug-helper.exe"
+
+  # make virt-viewer debug the default spice-x client
+  WriteRegStr HKCU "Software\spice-space.org\spicex" "client" "$INSTDIR\bin\debug-helper.exe remote-viewer.exe --spice-controller"
+SectionEnd
+
+Section "Uninstall"
+  Delete /rebootok "$INSTDIR\bin\debug-helper.exe"
+  Delete /rebootok "$INSTDIR\bin\gdbserver.exe"
+  Delete /rebootok "$INSTDIR\bin\gdb.exe"
+  RMDir "$INSTDIR\bin"
+
+  RMDir "$INSTDIR"
+SectionEnd
+
+Section -post
+  WriteUninstaller "$INSTDIR\Uninstall-debug.exe"
+SectionEnd
