@@ -1,4 +1,0 @@
----- virt_viewer_window_toolbar_setup Matches (3 in 1 files) ----
-Virt-viewer-window.c (y:\work\spice-x86\virt-viewer-2.0\src):static void virt_viewer_window_toolbar_setup(VirtViewerWindow *self);
-Virt-viewer-window.c (y:\work\spice-x86\virt-viewer-2.0\src):    virt_viewer_window_toolbar_setup(self);
-Virt-viewer-window.c (y:\work\spice-x86\virt-viewer-2.0\src):virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
