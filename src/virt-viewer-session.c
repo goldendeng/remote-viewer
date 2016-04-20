@@ -214,6 +214,15 @@ virt_viewer_session_class_init(VirtViewerSessionClass *class)
                  g_cclosure_marshal_VOID__VOID,
                  G_TYPE_NONE,
                  0);
+		
+	g_signal_new("session-inputstimeout",
+                 G_OBJECT_CLASS_TYPE(object_class),
+                 G_SIGNAL_RUN_FIRST,
+                 G_STRUCT_OFFSET(VirtViewerSessionClass, session_inputstimeout),
+                 NULL, NULL,
+                 g_cclosure_marshal_VOID__VOID,
+                 G_TYPE_NONE,
+                 0);
 	
     g_signal_new("session-initialized",
                  G_OBJECT_CLASS_TYPE(object_class),

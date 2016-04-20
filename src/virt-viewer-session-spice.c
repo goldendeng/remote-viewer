@@ -641,6 +641,13 @@ virt_viewer_session_spice_input_channel_event(SpiceChannel *channel G_GNUC_UNUSE
     	}
 }
 
+static void
+virt_viewer_session_spice_input_channel_timeout(SpiceChannel *channel G_GNUC_UNUSED,
+									VirtViewerSession *session)
+{
+	g_signal_emit_by_name(session, "session-inputstimeout");     
+}
+
 static void remove_cb(GtkContainer   *container G_GNUC_UNUSED,
                       GtkWidget      *widget G_GNUC_UNUSED,
                       void           *user_data)
@@ -809,6 +816,8 @@ virt_viewer_session_spice_channel_new(SpiceSession *s,
     if (SPICE_IS_INPUTS_CHANNEL(channel)) {
 		virt_viewer_signal_connect_object(channel, "channel-event",
                                           G_CALLBACK(virt_viewer_session_spice_input_channel_event), self, 0);
+		virt_viewer_signal_connect_object(channel, "inputs_timeout",
+                                          G_CALLBACK(virt_viewer_session_spice_input_channel_timeout), self, 0);
         g_debug("new inputs channel");
     }
 
