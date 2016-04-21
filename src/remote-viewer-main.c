@@ -44,6 +44,9 @@
 #include "remote-viewer.h"
 #include "virt-viewer-app.h"
 #include "virt-viewer-session.h"
+#include "view/autoDrawer.h"
+
+static VirtViewerApp *app;
 
 static gboolean reconnect = FALSE;
 
@@ -88,6 +91,20 @@ static void input_reconnect( VirtViewerApp *self G_GNUC_UNUSED)
     reconnect = TRUE;
 }
 
+static void input_timeout()
+{
+	gchar *msg = "network error";
+	virt_viewer_app_simple_message_dialog(app, msg);
+	msg = NULL;
+	g_free(msg);
+}
+
+/*static void timeout_toolbar( VirtViewerApp *self )
+{
+	VirtViewerWindow *window;
+	window = virt_viewer_app_get_main_window(self);
+		
+}*/
 
 int
 main(int argc, char **argv)
@@ -106,7 +123,7 @@ main(int argc, char **argv)
 #ifdef HAVE_SPICE_GTK
     gboolean controller = FALSE;
 #endif
-    VirtViewerApp *app;
+    //VirtViewerApp *app;
     const GOptionEntry options [] = {
         { "version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
           remote_viewer_version, N_("Display version information"), NULL },
@@ -213,6 +230,8 @@ rec:
                      G_CALLBACK(connected), app);
     g_signal_connect(virt_viewer_app_get_session(app), "session-reconnect",
                      G_CALLBACK(input_reconnect), app);
+	g_signal_connect(virt_viewer_app_get_session(app), "session-inputstimeout",
+                     G_CALLBACK(input_timeout), app);
 
     gtk_main();
 

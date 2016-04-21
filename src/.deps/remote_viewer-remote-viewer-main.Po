@@ -624,7 +624,8 @@ remote_viewer-remote-viewer-main.o: remote-viewer-main.c \
  /usr/local/include/spice-client-glib-2.0/spice-util.h remote-viewer.h \
  virt-viewer-app.h virt-viewer-util.h virt-viewer-window.h \
  virt-viewer-notebook.h virt-viewer-display.h virt-viewer-enums.h \
- virt-viewer-session.h virt-viewer-file.h virt-glib-compat.h
+ virt-viewer-session.h virt-viewer-file.h virt-glib-compat.h \
+ view/autoDrawer.h view/drawer.h view/ovBox.h
 
 /usr/include/stdc-predef.h:
 
@@ -2005,3 +2006,9 @@ virt-viewer-session.h:
 virt-viewer-file.h:
 
 virt-glib-compat.h:
+
+view/autoDrawer.h:
+
+view/drawer.h:
+
+view/ovBox.h:
