@@ -1241,8 +1241,7 @@ virt_viewer_app_activate(VirtViewerApp *self, GError **error)
         priv->connected = FALSE;
     } else {
         virt_viewer_app_show_status(self, _("Connecting to graphic server"));
-	g_debug("abc");
-        priv->cancelled = FALSE;
+	    priv->cancelled = FALSE;
         priv->active = TRUE;
     }
 

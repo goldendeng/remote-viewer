@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: Marc-Andr√© Lureau <marcandre.lureau@redhat.com>
+ * Author: Marc-Andr®¶ Lureau <marcandre.lureau@redhat.com>
  */
 
 #include <config.h>
@@ -49,6 +49,8 @@
 static VirtViewerApp *app;
 
 static gboolean reconnect = FALSE;
+static gboolean dialog = TRUE;
+
 
 static void
 remote_viewer_version(void)
@@ -91,12 +93,18 @@ static void input_reconnect( VirtViewerApp *self G_GNUC_UNUSED)
     reconnect = TRUE;
 }
 
+static gint dialog_set()
+{
+	dialog = TRUE;	
+	return TRUE;
+}
 static void input_timeout()
 {
-	gchar *msg = "network error";
-	virt_viewer_app_simple_message_dialog(app, msg);
-	msg = NULL;
-	g_free(msg);
+	if(dialog)
+		{
+			virt_viewer_app_simple_message_dialog(app,_("Network failure, please check the network"));
+			dialog = FALSE;
+		}
 }
 
 /*static void timeout_toolbar( VirtViewerApp *self )
@@ -232,6 +240,8 @@ rec:
                      G_CALLBACK(input_reconnect), app);
 	g_signal_connect(virt_viewer_app_get_session(app), "session-inputstimeout",
                      G_CALLBACK(input_timeout), app);
+	
+	g_timeout_add_seconds(60,dialog_set,NULL);
 
     gtk_main();
 
@@ -246,7 +256,7 @@ rec:
     if (viewer)
         g_object_unref(viewer);
     g_strfreev(args);
-
+	
     return ret;
 }
 

@@ -1,24 +1,26 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Geert Warrink <geert.warrink@onsnet.nu>, 2010-2014
 msgid ""
 msgstr ""
 "Project-Id-Version: virt-viewer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-12 11:21+0000\n"
+"POT-Creation-Date: 2016-04-25 16:22+0800\n"
 "PO-Revision-Date: 2015-01-12 11:21+0000\n"
 "Last-Translator: Daniel Berrange <dan-transifex@berrange.com>\n"
-"Language-Team: Dutch (http://www.transifex.com/projects/p/virt-viewer/language/nl/)\n"
+"Language-Team: Dutch (http://www.transifex.com/projects/p/virt-viewer/"
+"language/nl/)\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../data/remote-viewer.desktop.in.h:1 ../src/remote-viewer-main.c:112
+#. GOptionGroup *app_options_new = NULL;
+#: ../data/remote-viewer.desktop.in.h:1 ../src/remote-viewer-main.c:159
 msgid "Remote Viewer"
 msgstr "Viewer op afstand"
 
@@ -70,134 +72,160 @@ msgstr "Vlaggen"
 msgid "The binding flags"
 msgstr "De bindingsvlaggen"
 
-#: ../src/remote-viewer-main.c:50
+#: ../src/remote-viewer-main.c:58
 #, c-format
 msgid "remote-viewer version %s\n"
 msgstr "remote-viewer versie %s\n"
 
-#: ../src/remote-viewer-main.c:99 ../src/virt-viewer-main.c:60
+#: ../src/remote-viewer-main.c:105
+msgid "Network failure, please check the network"
+msgstr ""
+
+#: ../src/remote-viewer-main.c:137 ../src/virt-viewer-main.c:60
 msgid "Display version information"
 msgstr "Toon versie informatie"
 
-#: ../src/remote-viewer-main.c:101
+#: ../src/remote-viewer-main.c:139
 msgid "Set window title"
 msgstr "Stel venstertitel in"
 
-#: ../src/remote-viewer-main.c:104
+#: ../src/remote-viewer-main.c:141
+msgid "Spice server address"
+msgstr ""
+
+#: ../src/remote-viewer-main.c:143
+msgid "Spice server port"
+msgstr ""
+
+#: ../src/remote-viewer-main.c:145
+msgid "Spice server secure port"
+msgstr ""
+
+#: ../src/remote-viewer-main.c:147
+msgid "Server password"
+msgstr ""
+
+#: ../src/remote-viewer-main.c:150
 msgid "Open connection using Spice controller communication"
 msgstr "Open verbinding met Spice controller communicatie"
 
-#: ../src/remote-viewer-main.c:116
+#: ../src/remote-viewer-main.c:163
 msgid "Remote viewer client"
 msgstr "Viewer cliënt op afstand "
 
-#: ../src/remote-viewer-main.c:134
+#: ../src/remote-viewer-main.c:183
 #, c-format
 msgid ""
 "%s\n"
 "Run '%s --help' to see a full list of available command line options\n"
-msgstr "%s\nVoer '%s --help' uit voor een volledige lijst met beschikbare commandoregel opties\n"
+msgstr ""
+"%s\n"
+"Voer '%s --help' uit voor een volledige lijst met beschikbare commandoregel "
+"opties\n"
 
-#: ../src/remote-viewer-main.c:146
+#: ../src/remote-viewer-main.c:195
 #, c-format
 msgid "Error: extra arguments given while using Spice controller\n"
-msgstr "Fout: extra argumenten gegeven tijden het gebruik van de Spice controller\n"
+msgstr ""
+"Fout: extra argumenten gegeven tijden het gebruik van de Spice controller\n"
 
-#: ../src/remote-viewer-main.c:153
+#: ../src/remote-viewer-main.c:202
 #, c-format
 msgid "Error: can't handle multiple URIs\n"
 msgstr "Fout: kan meerdere URI's niet verwerken\n"
 
-#: ../src/remote-viewer.c:298 ../src/remote-viewer.c:1287
+#: ../src/remote-viewer.c:302 ../src/remote-viewer.c:1295
 msgid "Failed to initiate connection"
 msgstr "Verbinding initiëren mislukte"
 
-#: ../src/remote-viewer.c:313
+#: ../src/remote-viewer.c:317
 msgid "Display disabled by controller"
 msgstr "Display uitgezet door controller"
 
-#: ../src/remote-viewer.c:609
+#: ../src/remote-viewer.c:613
 #, c-format
 msgid "Controller connection failed: %s"
 msgstr "Controller verbinding mislukte: %s"
 
-#: ../src/remote-viewer.c:752
+#: ../src/remote-viewer.c:756
 msgid "_Change CD"
 msgstr ""
 
-#: ../src/remote-viewer.c:846
+#: ../src/remote-viewer.c:850
 msgid "failed to parse ovirt uri"
 msgstr ""
 
-#: ../src/remote-viewer.c:883
+#: ../src/remote-viewer.c:887
 #, c-format
 msgid "oVirt VM %s is not running"
 msgstr ""
 
-#: ../src/remote-viewer.c:897
+#: ../src/remote-viewer.c:901
 #, c-format
 msgid "oVirt VM %s has no display"
 msgstr ""
 
-#: ../src/remote-viewer.c:922
+#: ../src/remote-viewer.c:926
 #, c-format
 msgid "oVirt VM %s has unknown display type: %d"
 msgstr ""
 
-#: ../src/remote-viewer.c:938
+#: ../src/remote-viewer.c:942
 #, c-format
 msgid "Failed to create a session type %s"
 msgstr ""
 
 #. Create the widgets
-#: ../src/remote-viewer.c:1068
+#: ../src/remote-viewer.c:1072
 msgid "Connection details"
 msgstr "Verbindingsdetails"
 
-#: ../src/remote-viewer.c:1083
+#: ../src/remote-viewer.c:1087
 msgid "_Connection Address"
 msgstr "_Verbindingsadres"
 
-#: ../src/remote-viewer.c:1095
+#: ../src/remote-viewer.c:1099
 msgid "For example, spice://foo.example.org:5900"
 msgstr "Bijvoorbeeld, spice://foo.example.org:5900"
 
-#: ../src/remote-viewer.c:1108
+#: ../src/remote-viewer.c:1112
 msgid "_Recent Connections"
 msgstr "_Recente verbindingen"
 
-#: ../src/remote-viewer.c:1208
+#: ../src/remote-viewer.c:1212
 msgid "Couldn't create a Spice session"
 msgstr "Kon geen Spice sessie aanmaken"
 
-#: ../src/remote-viewer.c:1222
+#: ../src/remote-viewer.c:1226
 msgid "Setting up Spice session..."
 msgstr "Spice sessie opzetten..."
 
-#: ../src/remote-viewer.c:1244
+#: ../src/remote-viewer.c:1248
 #, c-format
 msgid "Invalid file %s"
 msgstr "Ongeldig bestand %s"
 
-#: ../src/remote-viewer.c:1251
+#: ../src/remote-viewer.c:1255
 msgid "Cannot determine the connection type from URI"
 msgstr "Kan het connectie type niet van URI bepalen"
 
-#: ../src/remote-viewer.c:1259
+#: ../src/remote-viewer.c:1267
 #, c-format
 msgid "Couldn't open oVirt session: %s"
 msgstr ""
 
-#: ../src/remote-viewer.c:1269
+#: ../src/remote-viewer.c:1277
 #, c-format
 msgid "Couldn't create a session for this type: %s"
 msgstr "Kan sessie niet aanmaken voor dit type: %s"
 
+#.
 #. * Local variables:
 #. *  c-indent-level: 4
 #. *  c-basic-offset: 4
 #. *  indent-tabs-mode: nil
 #. * End:
+#.
 #: ../src/virt-viewer-about.xml.h:1
 msgid "About Glade"
 msgstr "Over Glade"
@@ -206,11 +234,14 @@ msgstr "Over Glade"
 msgid ""
 "Copyright (C) 2007-2012 Daniel P. Berrange\n"
 "Copyright (C) 2007-2014 Red Hat, Inc."
-msgstr "Copyright (C) 2007-2012 Daniel P. Berrange\nCopyright (C) 2007-2014 Red Hat, Inc."
+msgstr ""
+"Copyright (C) 2007-2012 Daniel P. Berrange\n"
+"Copyright (C) 2007-2014 Red Hat, Inc."
 
 #: ../src/virt-viewer-about.xml.h:4
 msgid "A remote desktop client built with GTK-VNC, SPICE-GTK and libvirt"
-msgstr "Een desktop op afstand cliënt gebouwd met GTK-VNC, SPICE-GTK en libvirt"
+msgstr ""
+"Een desktop op afstand cliënt gebouwd met GTK-VNC, SPICE-GTK en libvirt"
 
 #: ../src/virt-viewer-about.xml.h:5
 msgid "virt-manager.org"
@@ -231,124 +262,141 @@ msgid ""
 "You should have received a copy of the GNU General Public License\n"
 "along with this program; if not, write to the Free Software\n"
 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
-msgstr "This program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
+msgstr ""
+"This program is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2 of the License, or\n"
+"(at your option) any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with this program; if not, write to the Free Software\n"
+"Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
 
 #: ../src/virt-viewer-about.xml.h:20
 msgid "The Fedora Translation Team"
 msgstr "Het Fedora vertaal team"
 
-#: ../src/virt-viewer-app.c:484
+#: ../src/virt-viewer-app.c:490
 msgid "Do you want to close the session?"
 msgstr "Wil je de sessie afsluiten?"
 
-#: ../src/virt-viewer-app.c:486
+#: ../src/virt-viewer-app.c:492
 msgid "Do not ask me again"
 msgstr "Vraag me dit niet weer"
 
-#: ../src/virt-viewer-app.c:948
+#: ../src/virt-viewer-app.c:954
 #, c-format
 msgid "Waiting for display %d..."
 msgstr "Wachten op display %d..."
 
-#: ../src/virt-viewer-app.c:1057
+#: ../src/virt-viewer-app.c:1063
 #, c-format
 msgid "Unknown graphic type for the guest %s"
 msgstr "Onbekend grafisch type voor de gast %s"
 
-#: ../src/virt-viewer-app.c:1138
+#: ../src/virt-viewer-app.c:1144
 msgid "Connect to ssh failed."
 msgstr "Verbinden met ssh mislukte."
 
-#: ../src/virt-viewer-app.c:1140
+#: ../src/virt-viewer-app.c:1146
 msgid "Can't connect to channel, SSH only supported."
 msgstr "Kan geen verbinding maken met kanaal, alleen SSH wordt ondersteund"
 
-#: ../src/virt-viewer-app.c:1152
+#: ../src/virt-viewer-app.c:1158
 msgid "Connect to channel unsupported."
 msgstr "Verbinding maken met kanaal wordt niet ondersteund."
 
-#: ../src/virt-viewer-app.c:1214
+#: ../src/virt-viewer-app.c:1220
 msgid "Display can only be attached through libvirt with --attach"
 msgstr ""
 
-#: ../src/virt-viewer-app.c:1237
+#: ../src/virt-viewer-app.c:1243
 msgid "Connecting to graphic server"
 msgstr "Verbinding maken met grafische server"
 
-#: ../src/virt-viewer-app.c:1336
+#: ../src/virt-viewer-app.c:1342
 msgid "Guest domain has shutdown"
 msgstr "Gast domein werd afgesloten"
 
-#: ../src/virt-viewer-app.c:1397
+#: ../src/virt-viewer-app.c:1403
 msgid "Connected to graphic server"
 msgstr "Verbonden met grafische server"
 
-#: ../src/virt-viewer-app.c:1424
+#: ../src/virt-viewer-app.c:1430
 #, c-format
 msgid "Unable to connect to the graphic server %s"
 msgstr "Ka niet verbinden met de grafische server %s"
 
-#: ../src/virt-viewer-app.c:1456
+#: ../src/virt-viewer-app.c:1462
 #, c-format
 msgid ""
 "Unable to authenticate with remote desktop server at %s: %s\n"
 "Retry connection again?"
-msgstr "Kon geen authenticatieverkrijgen met desktop server op afstand op %s: %s\nVerbinding opnieuw proberen?"
+msgstr ""
+"Kon geen authenticatieverkrijgen met desktop server op afstand op %s: %s\n"
+"Verbinding opnieuw proberen?"
 
-#: ../src/virt-viewer-app.c:1476
+#: ../src/virt-viewer-app.c:1482
 #, c-format
 msgid "Unable to authenticate with remote desktop server: %s"
 msgstr "Kon geen authenticatie verkrijgen met desktop server op afstand: %s"
 
-#: ../src/virt-viewer-app.c:1484
+#: ../src/virt-viewer-app.c:1490
 #, c-format
 msgid "USB redirection error: %s"
 msgstr "USB omleidingsfout: %s"
 
-#: ../src/virt-viewer-app.c:1735
+#: ../src/virt-viewer-app.c:1783
 #, c-format
 msgid "Zoom level must be within %d-%d\n"
 msgstr "Zoom niveau moet tussen %d-%d zijn\n"
 
-#: ../src/virt-viewer-app.c:2245
+#: ../src/virt-viewer-app.c:2329
 #, c-format
 msgid "Display %d"
 msgstr "Display %d"
 
-#: ../src/virt-viewer-app.c:2418
+#: ../src/virt-viewer-app.c:2502
 #, c-format
 msgid "Invalid kiosk-quit argument: %s"
 msgstr "Ongeldig kiosk-quit argument: %s"
 
-#: ../src/virt-viewer-app.c:2427
+#: ../src/virt-viewer-app.c:2512
 msgid "Zoom level of window, in percentage"
 msgstr "Zoom niveau in percentage van het venster"
 
-#: ../src/virt-viewer-app.c:2429
+#: ../src/virt-viewer-app.c:2514
 msgid "Open in full screen mode (adjusts guest resolution to fit the client)"
-msgstr "Open in volledig-scherm modus (past gastresolutie aan om te passen bij die van de cliënt)."
+msgstr ""
+"Open in volledig-scherm modus (past gastresolutie aan om te passen bij die "
+"van de cliënt)."
 
-#: ../src/virt-viewer-app.c:2431
+#: ../src/virt-viewer-app.c:2516
 msgid "Customise hotkeys"
 msgstr "Pas sneltoetsen aan"
 
-#: ../src/virt-viewer-app.c:2433
+#: ../src/virt-viewer-app.c:2518
 msgid "Enable kiosk mode"
 msgstr "Zet kiosk modus aan"
 
-#: ../src/virt-viewer-app.c:2435
+#: ../src/virt-viewer-app.c:2520
 msgid "Quit on given condition in kiosk mode"
 msgstr "Sluit af bij gegeven conditie in kiosk modus"
 
-#: ../src/virt-viewer-app.c:2435
+#: ../src/virt-viewer-app.c:2520
 msgid "<never|on-disconnect>"
 msgstr "<never|on-disconnect>"
 
-#: ../src/virt-viewer-app.c:2437
+#: ../src/virt-viewer-app.c:2522
 msgid "Display verbose information"
 msgstr "Toon uitgebreide informatie"
 
-#: ../src/virt-viewer-app.c:2439
+#: ../src/virt-viewer-app.c:2524
 msgid "Display debugging information"
 msgstr "Toon debug informatie"
 
@@ -366,11 +414,13 @@ msgstr ""
 msgid "Authentication is required for the %s connection:\n"
 msgstr ""
 
+#.
 #. * Local variables:
 #. *  c-indent-level: 4
 #. *  c-basic-offset: 4
 #. *  indent-tabs-mode: nil
 #. * End:
+#.
 #: ../src/virt-viewer-auth.xml.h:1
 msgid "Authentication required"
 msgstr "Authenticatie is vereist"
@@ -423,7 +473,9 @@ msgstr "Virt viewer"
 #: ../src/virt-viewer-main.c:80
 #, c-format
 msgid "Run '%s --help' to see a full list of available command line options"
-msgstr "Voer '%s --help' uit voor een volledige lijst met beschikbare commandoregel opties"
+msgstr ""
+"Voer '%s --help' uit voor een volledige lijst met beschikbare commandoregel "
+"opties"
 
 #: ../src/virt-viewer-main.c:86
 msgid "Virtual machine graphical console"
@@ -437,14 +489,19 @@ msgid ""
 "\n"
 "%s\n"
 "\n"
-msgstr "\nGebruik: %s [OPTIES] DOMEIN-NAAM|ID|UUID\n\n%s\n\n"
+msgstr ""
+"\n"
+"Gebruik: %s [OPTIES] DOMEIN-NAAM|ID|UUID\n"
+"\n"
+"%s\n"
+"\n"
 
-#: ../src/virt-viewer-session-spice.c:535
+#: ../src/virt-viewer-session-spice.c:537
 msgid "Invalid password"
 msgstr ""
 
 #. Create the widgets
-#: ../src/virt-viewer-session-spice.c:632
+#: ../src/virt-viewer-session-spice.c:667
 msgid "Select USB devices for redirection"
 msgstr "Selecteer USB apparaten voor omleiding"
 
@@ -548,10 +605,9 @@ msgid "(Press %s to release pointer)"
 msgstr "(Druk op %s om wijzer vrij te geven)"
 
 #. translators:
-#. * This is "<ungrab (or empty)><space (or empty)><subtitle (or empty)> -
-#. <appname>"
-#. * Such as: "(Press Ctrl+Alt to release pointer) BigCorpTycoon MOTD - Virt
-#. Viewer"
+#. * This is "<ungrab (or empty)><space (or empty)><subtitle (or empty)> - <appname>"
+#. * Such as: "(Press Ctrl+Alt to release pointer) BigCorpTycoon MOTD - Virt Viewer"
+#.
 #: ../src/virt-viewer-window.c:1232
 #, c-format
 msgid "%s%s%s - %s"
@@ -624,11 +680,13 @@ msgstr "[geen]"
 msgid "Authentication failed."
 msgstr ""
 
+#.
 #. * Local variables:
 #. *  c-indent-level: 4
 #. *  c-basic-offset: 4
 #. *  indent-tabs-mode: nil
 #. * End:
+#.
 #: ../src/virt-viewer.xml.h:1
 msgid "_File"
 msgstr "_Bestand"
