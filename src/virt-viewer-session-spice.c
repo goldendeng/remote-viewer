@@ -511,6 +511,9 @@ virt_viewer_session_spice_main_channel_event(SpiceChannel *channel G_GNUC_UNUSED
     case SPICE_CHANNEL_CLOSED:
         g_debug("main channel: closed");
         /* Ensure the other channels get closed too */
+#if defined(G_OS_WIN32)
+        send_and_read_from_pipe(EVDI_CHANNEL_CLOSE, TRUE);
+#endif		
         virt_viewer_session_clear_displays(session);
         if (self->priv->session)
             spice_session_disconnect(self->priv->session);
@@ -599,15 +602,29 @@ virt_viewer_session_spice_main_channel_event(SpiceChannel *channel G_GNUC_UNUSED
 #else
         g_debug("main channel: failed to connect");
         g_signal_emit_by_name(session, "session-disconnected", NULL);
+		#if defined(G_OS_WIN32)
+        	send_and_read_from_pipe(EVDI_CHANNEL_ERROR_LINK, TRUE);
+		#endif
 #endif
         break;
     case SPICE_CHANNEL_ERROR_IO:
+		#if defined(G_OS_WIN32)
+        	send_and_read_from_pipe(EVDI_CHANNEL_ERROR_IO, TRUE);
+		#endif	
+		break;
     case SPICE_CHANNEL_ERROR_LINK:
+		#if defined(G_OS_WIN32)
+        	send_and_read_from_pipe(EVDI_CHANNEL_ERROR_LINK, TRUE);
+		#endif
+		break;
     case SPICE_CHANNEL_ERROR_TLS:
         g_signal_emit_by_name(session, "session-disconnected", NULL);
         break;
     default:
         g_warning("unhandled spice main channel event: %d", event);
+		#if defined(G_OS_WIN32)
+        	send_and_read_from_pipe(EVDI_CHANNEL_ERROR_UNKNOWN, TRUE);
+		#endif
         break;
     }
 
@@ -628,7 +645,7 @@ virt_viewer_session_spice_input_channel_event(SpiceChannel *channel G_GNUC_UNUSE
     g_return_if_fail(self != NULL);
 
     switch (event) {
-    case SPICE_CHANNEL_ERROR_INPUT:
+    case SPICE_CHANNEL_CLOSED:
         g_debug("input channel: error");
         /* Ensure the other channels get closed too */
         virt_viewer_session_clear_displays(session);

@@ -296,6 +296,7 @@ remote_viewer-virt-viewer-session-spice.o: virt-viewer-session-spice.c \
  /usr/local/include/spice-client-glib-2.0/smartcard-manager.h \
  /usr/local/include/spice-client-glib-2.0/usb-device-manager.h \
  /usr/local/include/spice-client-glib-2.0/spice-audio.h \
+ /usr/local/include/spice-client-glib-2.0/spice-file-transfer-task.h \
  /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h \
  /usr/include/locale.h /usr/include/x86_64-linux-gnu/bits/locale.h \
  /usr/include/string.h /usr/include/x86_64-linux-gnu/bits/string.h \
@@ -1315,6 +1316,8 @@ remote_viewer-virt-viewer-session-spice.o: virt-viewer-session-spice.c \
 /usr/local/include/spice-client-glib-2.0/usb-device-manager.h:
 
 /usr/local/include/spice-client-glib-2.0/spice-audio.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-file-transfer-task.h:
 
 /usr/include/glib-2.0/glib/gi18n.h:
 

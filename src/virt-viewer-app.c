@@ -240,13 +240,16 @@ virt_viewer_app_simple_message_dialog(VirtViewerApp *self,
     GtkWidget *dialog;
     char *msg;
     va_list vargs;
+	//GdkColor color;
 
     va_start(vargs, fmt);
     msg = g_strdup_vprintf(fmt, vargs);
     va_end(vargs);
 
     dialog = virt_viewer_app_make_message_dialog(self, msg);
-    gtk_dialog_run(GTK_DIALOG(dialog));
+	//gdk_color_parse("blue", &color);
+    //gtk_widget_modify_bg(GTK_WIDGET(dialog), GTK_STATE_NORMAL, &color);
+	gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
 
     g_free(msg);
@@ -2526,7 +2529,7 @@ virt_viewer_app_get_option_group(void)
         { NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
     };
     GOptionGroup *group;
-    group = g_option_group_new("virt-viewer", NULL, NULL, NULL, NULL);
+    group = g_option_group_new("virt-viewer", _("Remote-viewer Options:"), _("Show Remote-viewer Options"), NULL, NULL);
     g_option_group_add_entries(group, options);
 
     return group;

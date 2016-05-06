@@ -67,7 +67,7 @@ GtkWindow* virt_viewer_window_get_window (VirtViewerWindow* window);
 VirtViewerNotebook* virt_viewer_window_get_notebook (VirtViewerWindow* window);
 void virt_viewer_window_set_display(VirtViewerWindow *self, VirtViewerDisplay *display);
 VirtViewerDisplay* virt_viewer_window_get_display(VirtViewerWindow *self);
-void virt_viewer_window_set_usb_options_sensitive(VirtViewerWindow *self, gboolean sensitive);
+//void virt_viewer_window_set_usb_options_sensitive(VirtViewerWindow *self, gboolean sensitive);
 void virt_viewer_window_update_title(VirtViewerWindow *self);
 void virt_viewer_window_show(VirtViewerWindow *self);
 void virt_viewer_window_hide(VirtViewerWindow *self);
@@ -80,6 +80,42 @@ GtkBuilder* virt_viewer_window_get_builder(VirtViewerWindow *window);
 void virt_viewer_window_set_kiosk(VirtViewerWindow *self, gboolean enabled);
 
 G_END_DECLS
+
+#define CHANNELID_MAX 4
+#define MONITORID_MAX 4
+
+#define CONF_WRITE 1
+#define CONF_READ 0
+
+
+#if defined(G_OS_WIN32)
+#define CONTROLL_VERSION  1
+typedef struct ControllerMsg {
+    uint32_t version;
+    uint32_t id;
+    uint32_t result;
+} ControllerMsg;
+
+typedef struct _USBFILTERSET{
+    ControllerMsg header;
+    DWORD nCount;
+    unsigned short vid;
+    unsigned short pid;
+}UsbFilterSet;
+
+
+typedef BOOL (WINAPI *ChangeWindowMessageFilter)(UINT message, DWORD dwFlag);
+typedef BOOL (WINAPI *ChangeWindowMessageFilterEX)(HWND hWnd, UINT message, DWORD action, void *pChangeFilterStruct);
+
+#endif
+
+typedef struct _usbredirdisplay_rule {
+    gchar *vender_id;          
+    gchar *product_id;     
+    gchar *desc;    
+    int index;
+}UsbredirDisplayRule;
+
 
 #endif /* _VIRT_VIEWER_WINDOW */
 

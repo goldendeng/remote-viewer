@@ -128,14 +128,15 @@ main(int argc, char **argv)
     char *port= NULL;
     char *tls_port= NULL;
     char *password= NULL;
+	gboolean version = FALSE, enable_toolbar=FALSE, is_mode_vm=FALSE, passwd_is_needed=FALSE, complete_fullscreen=FALSE;
 #ifdef HAVE_SPICE_GTK
     gboolean controller = FALSE;
 #endif
     //VirtViewerApp *app;
     const GOptionEntry options [] = {
-        { "version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
-          remote_viewer_version, N_("Display version information"), NULL },
-        { "title", 't', 0, G_OPTION_ARG_STRING, &title,
+        { "version", '\0', 0, G_OPTION_ARG_NONE, &version,
+          N_("Display version and quit"), NULL },
+        { "t", 't', 0, G_OPTION_ARG_STRING, &title,
           N_("Set window title"), NULL },
         { "host", 'h', 0, G_OPTION_ARG_STRING, &host,
           N_("Spice server address"), NULL },
@@ -143,8 +144,9 @@ main(int argc, char **argv)
           N_("Spice server port"), NULL },
         { "secure-port", 's', 0, G_OPTION_ARG_STRING, &tls_port,
           N_("Spice server secure port"), NULL },
-        { "password", 'w', 0, G_OPTION_ARG_STRING, &password,
+        { "password", 'w', 0, G_OPTION_ARG_STRING, &password,        
           N_("Server password"), NULL },
+        
 #ifdef HAVE_SPICE_GTK
         { "spice-controller", '\0', 0, G_OPTION_ARG_NONE, &controller,
           N_("Open connection using Spice controller communication"), NULL },
@@ -153,20 +155,21 @@ main(int argc, char **argv)
           NULL, "URI|VV-FILE" },
         { NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
     };
-    GOptionGroup *app_options = NULL;
-    //GOptionGroup *app_options_new = NULL;
-
+    //GOptionGroup *app_options = NULL;
+	GOptionGroup *window_options = NULL;
+    
     virt_viewer_util_init(_("Remote Viewer"));
 
     /* Setup command line options */
     context = g_option_context_new (NULL);
-    g_option_context_set_summary(context, _("Remote viewer client"));
-    app_options = virt_viewer_app_get_option_group();
-    //app_options_new = spice_cmdline_get_option_group();
-    g_option_group_add_entries (app_options, options);
-    //g_option_group_add_entries (app_options, app_options_new);
-    g_option_context_set_main_group (context, app_options);
+    //g_option_context_set_summary(context, _("Remote viewer client"));
+//    app_options = virt_viewer_app_get_option_group();	
+    window_options = virt_viewer_window_get_option_group();
+	//g_option_group_add_entries (options, window_options);
+    g_option_group_add_entries (window_options, options);    
+    g_option_context_set_main_group (context, window_options);
     g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	g_option_context_add_group (context, virt_viewer_app_get_option_group());
 #ifdef HAVE_GTK_VNC
     g_option_context_add_group (context, vnc_display_get_option_group ());
 #endif
@@ -215,13 +218,7 @@ main(int argc, char **argv)
         viewer = remote_viewer_new(uri, host, port, tls_port, password);
         if (title)
             g_object_set(viewer, "title", title, NULL);
-	//if(host){
-		//g_object_set(viewer, "open_recent_dialog", 0, NULL);
-		//g_object_set(viewer, "ghost", host, NULL);
-		//g_object_set(viewer, "gport", port, NULL);
-		//g_object_set(viewer, "gtlsport", tls_port, NULL);
-		//g_object_set(viewer, "gpasswd", password, NULL);
-		//}
+
 #ifdef HAVE_SPICE_GTK
     }
 #endif

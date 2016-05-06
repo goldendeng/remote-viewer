@@ -688,6 +688,7 @@ remote_viewer-remote-viewer.o: remote-viewer.c /usr/include/stdc-predef.h \
  /usr/local/include/spice-client-glib-2.0/smartcard-manager.h \
  /usr/local/include/spice-client-glib-2.0/usb-device-manager.h \
  /usr/local/include/spice-client-glib-2.0/spice-audio.h \
+ /usr/local/include/spice-client-glib-2.0/spice-file-transfer-task.h \
  /usr/local/include/spice-client-gtk-3.0/spice-grabsequence.h \
  /usr/local/include/spice-client-gtk-3.0/spice-widget-enums.h \
  /usr/local/include/spice-client-glib-2.0/spice-util.h \
@@ -2197,6 +2198,8 @@ virt-viewer-session-spice.h:
 /usr/local/include/spice-client-glib-2.0/usb-device-manager.h:
 
 /usr/local/include/spice-client-glib-2.0/spice-audio.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-file-transfer-task.h:
 
 /usr/local/include/spice-client-gtk-3.0/spice-grabsequence.h:
 

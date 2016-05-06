@@ -35,12 +35,32 @@
 #include <glib/gprintf.h>
 #include <glib/gi18n.h>
 
+
 #include "virt-gtk-compat.h"
 #include "virt-viewer-window.h"
 #include "virt-viewer-session.h"
 #include "virt-viewer-app.h"
 #include "virt-viewer-util.h"
 #include "view/autoDrawer.h"
+
+//#include <libusb-1.0/libusb.h>
+//#include <spice-client.h>
+//#include <usbredirfilter.h>
+
+
+
+
+#ifdef HAVE_SPICE_GTK
+#include "virt-viewer-session-spice.h"
+#include <spice-client-gtk.h>
+#endif
+
+#if defined(G_OS_WIN32)
+#include <windows.h>
+#define PIPE_NAME TEXT("\\\\.\\pipe\\SpiceController-500")
+static HANDLE pipe = INVALID_HANDLE_VALUE;
+#endif
+
 
 /* Signal handlers for main window (move in a VirtViewerMainWindow?) */
 void virt_viewer_window_menu_view_zoom_out(GtkWidget *menu, VirtViewerWindow *self);
@@ -66,6 +86,8 @@ static void virt_viewer_window_resize(VirtViewerWindow *self, gboolean keep_win_
 static void virt_viewer_window_toolbar_setup(VirtViewerWindow *self);
 static GtkMenu* virt_viewer_window_get_keycombo_menu(VirtViewerWindow *self);
 
+static void restore_configuration(VirtViewerWindow *win);
+
 G_DEFINE_TYPE (VirtViewerWindow, virt_viewer_window, G_TYPE_OBJECT)
 
 #define GET_PRIVATE(o)                                                  \
@@ -76,7 +98,7 @@ enum {
     PROP_WINDOW,
     PROP_DISPLAY,
     PROP_SUBTITLE,
-    PROP_APP,
+    PROP_APP,   
 };
 
 struct _VirtViewerWindowPrivate {
@@ -86,7 +108,7 @@ struct _VirtViewerWindowPrivate {
     GtkWidget *window;
     GtkWidget *layout;
     GtkWidget *toolbar;
-    GtkWidget *toolbar_usb_device_selection;
+    //GtkWidget *toolbar_usb_device_selection;
     GtkWidget *toolbar_send_key;
     GtkAccelGroup *accel_group;
     VirtViewerNotebook *notebook;
@@ -104,7 +126,20 @@ struct _VirtViewerWindowPrivate {
     gint zoomlevel;
     gboolean fullscreen;
     gchar *subtitle;
+		
+#ifdef G_OS_WIN32
+	gint						 win_x;
+	gint						 win_y;
+#endif
+	
 };
+/*option*/
+static gboolean version = FALSE, enable_toolbar=FALSE, is_mode_vm=FALSE, passwd_is_needed=FALSE, complete_fullscreen=FALSE;
+static char * title = NULL;
+static char *port = 0;
+static int usb_indexs[4] = {0};
+/*global*/
+static GKeyFile      *keyfile = NULL;
 
 static void
 virt_viewer_window_get_property (GObject *object, guint property_id,
@@ -152,7 +187,7 @@ virt_viewer_window_set_property (GObject *object, guint property_id,
         g_return_if_fail(priv->app == NULL);
         priv->app = g_value_get_object(value);
         break;
-
+	
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -242,9 +277,9 @@ virt_viewer_window_class_init (VirtViewerWindowClass *klass)
                                                         "",
                                                         G_PARAM_READABLE |
                                                         G_PARAM_WRITABLE |
-                                                        G_PARAM_STATIC_STRINGS));
+                                                        G_PARAM_STATIC_STRINGS));	
 
-    g_object_class_install_property(object_class,
+	g_object_class_install_property(object_class,
                                     PROP_WINDOW,
                                     g_param_spec_object("window",
                                                         "Window",
@@ -272,6 +307,7 @@ virt_viewer_window_class_init (VirtViewerWindowClass *klass)
                                                         G_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT_ONLY |
                                                         G_PARAM_STATIC_STRINGS));
+	
 }
 
 static gboolean
@@ -280,6 +316,70 @@ can_activate_cb (GtkWidget *widget G_GNUC_UNUSED,
                  VirtViewerWindow *self G_GNUC_UNUSED)
 {
     return TRUE;
+}
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+void init_with_css(void){
+    /*--- CSS -----------------*/
+    GtkCssProvider *provider; 
+    GdkDisplay *display;
+    GdkScreen *screen;
+    /*-------------------------*/
+    /** css  init */
+     provider = gtk_css_provider_new ();
+     display = gdk_display_get_default ();
+     screen = gdk_display_get_default_screen (display);
+
+     gtk_style_context_add_provider_for_screen (screen,
+                                     GTK_STYLE_PROVIDER (provider),
+                                     GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+     gsize bytes_written, bytes_read;
+
+     #ifndef G_OS_WIN32
+      const gchar* home = g_build_filename(g_path_get_dirname(LOCALE_DIR),"css", "tcloud.css", NULL);  
+     #else
+      gchar* current_path = g_build_path(G_DIR_SEPARATOR_S, g_path_get_dirname(g_find_program_in_path(g_get_application_name())), NULL);
+      const gchar* home = g_build_path(G_DIR_SEPARATOR_S, g_path_get_dirname(current_path), "share", "css", "tcloud.css", NULL);
+     #endif
+
+     GError *error = 0;
+    
+     gtk_css_provider_load_from_path(provider,
+                                      g_filename_to_utf8(home, strlen(home), &bytes_read, &bytes_written, &error),
+                                    NULL);
+     
+     g_object_unref (provider);
+}
+#endif
+
+static void log_handler(const gchar *log_domain,
+                        GLogLevelFlags log_level,
+                        const gchar *message,
+                        gpointer user_data)
+{   
+   GTimeVal  time;
+   gchar *tmp_buffer;
+   FILE *logfile;
+   g_get_current_time( &time );
+   /* Convert offset to real date */
+   
+   tmp_buffer = g_time_val_to_iso8601(&time);
+   if(user_data)
+        logfile = fopen (g_build_filename((const gchar *)user_data, "log", "evdi_gtk.log", NULL), "a");
+   else
+        logfile = fopen (g_build_filename(g_get_user_config_dir(), "evdi_gtk.log", NULL), "a");
+   
+   if (logfile == NULL)
+   {
+        /* Fall back to console output if unable to open file */
+        g_print("Error, Rerouted to console: %s\n", message);
+        return;
+   }
+
+   fprintf (logfile, "%s:%s\n", tmp_buffer, message);
+   fclose (logfile);
+   g_free(tmp_buffer);
 }
 
 static void
@@ -346,6 +446,84 @@ virt_viewer_window_init (VirtViewerWindow *self)
     }
 
     priv->zoomlevel = 100;
+
+//usb
+
+#if GTK_CHECK_VERSION(3,0,0)
+			init_with_css();
+#endif
+
+GError *error = NULL;
+
+gchar *conf_file;
+#if defined(G_OS_WIN32)
+    gchar *locale_path;
+    gchar *log_path;
+#endif
+
+#if defined(G_OS_WIN32)
+    log_path = g_build_path(G_DIR_SEPARATOR_S, g_path_get_dirname(g_find_program_in_path(g_get_application_name())), NULL);
+    locale_path = g_build_path(G_DIR_SEPARATOR_S, g_path_get_dirname(log_path), "share", "locale", NULL);
+    bindtextdomain(GETTEXT_PACKAGE, locale_path);
+#else
+    bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR);
+#endif  
+
+    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+    textdomain(GETTEXT_PACKAGE);
+    
+    
+
+    keyfile = g_key_file_new();
+    int mode = S_IRWXU;
+
+#if defined(G_OS_WIN32)
+    TCHAR szBuff[256] = {0}, *szPath = TEXT("software\\evdi-client");
+    HKEY hkey = NULL;
+    DWORD hsize = 256;
+    if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, szPath, 0, KEY_READ, &hkey) != ERROR_SUCCESS)
+        return 1;
+
+    if(RegQueryValueEx(hkey, TEXT("InstallPath"), 0, NULL, (UCHAR *)szBuff, &hsize) != ERROR_SUCCESS){
+        return 1;
+    }
+    conf_file = g_build_filename((const gchar *)szBuff, "conf", NULL);
+    if(!getenv("EVDI_LOG_CONSOLE"))
+        g_log_set_handler(G_LOG_DOMAIN, G_LOG_LEVEL_MASK, log_handler, szBuff);
+#else
+    conf_file = g_build_filename("/etc/evdi", "config", NULL);
+    if(!getenv("EVDI_LOG_CONSOLE"))
+        g_log_set_handler(G_LOG_DOMAIN, G_LOG_LEVEL_MASK, log_handler, NULL);
+#endif
+
+    if (g_mkdir_with_parents(conf_file, mode) == -1)
+        g_warning("failed to create config directory");
+    g_free(conf_file);
+
+
+#if defined(G_OS_WIN32)
+    conf_file = g_build_filename((const gchar *)szBuff, "conf", "gtk_settings", NULL);
+    RegCloseKey(hkey);
+#else
+    conf_file = g_build_filename("/etc/evdi", "config", "gtk_settings", NULL);
+#endif
+
+    if (!g_key_file_load_from_file(keyfile, conf_file,
+                                   G_KEY_FILE_KEEP_COMMENTS|G_KEY_FILE_KEEP_TRANSLATIONS, &error)) {
+        g_warning("Couldn't load configuration: %s", error->message);
+        g_clear_error(&error);
+		error = NULL;
+    }
+
+g_free(conf_file);
+			
+#if defined(G_OS_WIN32)
+				g_free(locale_path);
+				g_free(log_path);
+#endif
+
+restore_configuration(self);
+
 }
 
 static void
@@ -1090,26 +1268,916 @@ virt_viewer_window_menu_help_about(GtkWidget *menu G_GNUC_UNUSED,
     g_object_unref(G_OBJECT(about));
 }
 
+#if defined(G_OS_WIN32)
+int handle_open_pipe_error(void){
+     DWORD errval  = GetLastError();
+     if (errval != ERROR_PIPE_BUSY) 
+     {
+         gchar *errstr = g_win32_error_message(errval);
+         g_warning("Could not open pipe(%ld) %s\n", errval, errstr);
+         g_free(errstr);
+         return -1;
+     }
+     if ( !WaitNamedPipe(PIPE_NAME, 500)) 
+     { 
+         g_warning("Could not open pipe: 500 msecond wait timed out.\n"); 
+         return -1;
+     } 
+     return 1;
+}
+int open_pipe(void)
+{
+
+    pipe = CreateFile (PIPE_NAME, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+    if (pipe == INVALID_HANDLE_VALUE ) {
+       return handle_open_pipe_error();
+    }
+    return 1;
+}
+
+int handle_write_pipe_error(void){
+    DWORD errval  = GetLastError();
+    gchar *errstr = g_win32_error_message(errval);
+    g_warning("Write to pipe failed (%ld) %s\n", errval, errstr);
+    g_free(errstr);
+    return -1;
+}
+int write_to_pipe (const void* data, size_t len)
+{
+    DWORD written;
+ 
+    if (!WriteFile (pipe, data, len, &written, NULL) || written != len) {
+        return handle_write_pipe_error();
+    }
+    
+    return 1;
+}
+int send_usb_value(uint32_t id, unsigned short vid, unsigned short pid)
+{
+    UsbFilterSet usbFilterSet = {
+        {
+            CONTROLL_VERSION,
+            id,
+            TRUE,
+        },
+        1,
+        vid,
+        pid,
+    };
+    return write_to_pipe (&usbFilterSet, sizeof(usbFilterSet));
+}
+
+int send_value(uint32_t id, uint32_t value)
+{
+    ControllerMsg msg = {
+      CONTROLL_VERSION,
+      id,
+      value
+    };
+    return write_to_pipe (&msg, sizeof(msg));
+}
+void handle_read_error(void){
+    DWORD errval  = GetLastError();
+    gchar *errstr = g_win32_error_message(errval);
+    // return empty msg 
+    if(errval != ERROR_PIPE_NOT_CONNECTED){
+        g_warning("Read from pipe failed (%ld) %s\n", errval, errstr);
+        g_free(errstr); 
+    }
+}
+ssize_t read_from_pipe (void* data, size_t size)
+{
+    ssize_t read;
+    DWORD bytes;
+    if (!ReadFile (pipe, data, size, &bytes, NULL)) {
+        handle_read_error();       
+    }
+
+    read = bytes;
+    return read;
+}
+
+void handle_pipe_message(void)
+{
+    ControllerMsg msg;
+    while ((read_from_pipe (&msg, sizeof(msg))) == sizeof(msg)) {
+        switch(msg.id){
+            case EVDI_USB_FILTER_SET_REPLY:
+                g_message("set usb filter  \n");
+                break;
+            case EVDI_USB_FILTER_GET_REPLY:
+                g_message("get usb filter  \n");
+                break;
+            default:
+                g_message("default id  %d\n", msg.id);
+                break;
+        }
+        break;
+    }
+    
+}
+/**
+ * [send_and_read_from_pipe  use pipe
+ * @param win   SpiceWindow
+ * @param id    uint32_t
+ * @param value uint32_t
+ */
+void send_and_read_from_pipe (uint32_t id, uint32_t value){
+
+    int write_ret = send_value(id, value);
+    if(write_ret > 0){
+        handle_pipe_message();
+    }
+    
+}
+
+void send_usb_and_read_from_pipe(uint32_t id, unsigned short vid, unsigned short pid){
+
+    int write_ret = send_usb_value(id, vid, pid);
+    if(write_ret > 0){
+        handle_pipe_message();
+    }
+    
+}
+#endif
+
+
+static void send_cat(VirtViewerWindow *win){
+    SpiceGrabSequence *seq = spice_grab_sequence_new_from_string("Control_L+Alt_L+Delete");
+//    spice_display_send_keys(SPICE_DISPLAY(win->priv->display), seq->keysyms, seq->nkeysyms, SPICE_DISPLAY_KEY_EVENT_CLICK);
+	virt_viewer_display_send_keys(VIRT_VIEWER_DISPLAY(win->priv->display),
+                                  seq->keysyms, seq->nkeysyms);
+}
+static void menu_cb_sending_keys(GtkAction *action, void *data)
+{
+    // sending sending Control_L+Alt_L+Delete
+    VirtViewerWindow *win = data;
+    send_cat(win);
+}
+
+static SpiceSession * virt_viewer_window_getspice_session(VirtViewerWindow *self)
+{
+	SpiceSession *session = NULL;
+	VirtViewerSession *vsession =NULL;
+
+	g_object_get(self->priv->app, "session", &vsession, NULL);
+	
+	g_return_val_if_fail(vsession != NULL, NULL);
+
+    g_object_get(vsession, "spice-session", &session, NULL);
+
+    g_object_unref(vsession);
+
+    return session;
+}
+
+static void pop_poweroff_window(gpointer data){
+    char cmd[64];
+    int ret = 0;
+
+    VirtViewerWindow *win = data;
+	VirtViewerWindowPrivate *priv = win->priv;
+    GtkWidget *label, *area;
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+                    _("Forced Poweroff"),
+                    GTK_WINDOW(priv->window),
+                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                    _("_OK"), GTK_RESPONSE_ACCEPT,       
+                    _("_Cancel"), GTK_RESPONSE_CANCEL,
+                    NULL);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_MENU);
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
+    gtk_box_set_spacing(GTK_BOX(gtk_bin_get_child(GTK_BIN(dialog))), 20);
+    gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_CANCEL);
+    
+    label = gtk_label_new(_("Will be forced to close the desktop, Confirm or not?"));  
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    gtk_box_pack_start(GTK_BOX(area), label, TRUE, TRUE, 0); 
+
+    gtk_window_set_keep_above(GTK_WINDOW(priv->window), FALSE);
+    /* show and run */
+    gtk_widget_show_all(dialog);
+    gint result = gtk_dialog_run(GTK_DIALOG(dialog));
+
+	SpiceSession *session = virt_viewer_window_getspice_session(win);
+	
+
+		g_object_get(session,
+						"port",&port,
+						NULL);
+		g_warning("port = %s",port);
+		
+    switch (result) {
+        case GTK_RESPONSE_ACCEPT:
+#ifndef G_OS_WIN32		
+
+        sprintf(cmd, "/usr/bin/python /opt/pythonclient/bin/manager vm shutdown %s", port);
+       ret = system(cmd);
+        if(ret){
+            g_message("shutdown successful");
+        }
+#else
+        send_and_read_from_pipe(EVDI_POWEROFF, TRUE);
+#endif
+            break;
+
+        default:
+            break;
+    }
+    gtk_widget_destroy(dialog);
+}
+
+static void menu_cb_poweroff(GtkAction *action, void *data)
+{
+    pop_poweroff_window(data);
+}
+
+static void pop_close_window(gpointer data, int not_closed, int type){
+    VirtViewerWindow *win = data;
+	VirtViewerWindowPrivate *priv = win->priv;
+    GtkWidget *label, *area;
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+                    type == 1 ? _("Close Window") : _("Close Client"),
+                    GTK_WINDOW(priv->window),
+                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                    _("_OK"), GTK_RESPONSE_OK,
+                    _("_Cancel"), GTK_RESPONSE_CANCEL,
+                    NULL);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_MENU);
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
+    gtk_box_set_spacing(GTK_BOX(gtk_bin_get_child(GTK_BIN(dialog))), 20);
+    gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_CANCEL);
+    
+    label = type == 1 ? gtk_label_new(_("Do you want to close the window?")): 
+                            gtk_label_new(_("Do you want to close the client?"));  
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    gtk_box_pack_start(GTK_BOX(area), label, TRUE, TRUE, 0); 
+
+    gtk_window_set_keep_above(GTK_WINDOW(priv->window), FALSE);
+    /* show and run */
+    gtk_widget_show_all(dialog);
+    gint result = gtk_dialog_run(GTK_DIALOG(dialog));
+
+    switch (result) {
+        case GTK_RESPONSE_OK:
+#if defined(G_OS_WIN32)
+        if(not_closed){
+            send_and_read_from_pipe(EVDI_EXIT_PROGRAM, TRUE);
+            g_message("sending exit to host example!");
+        } 
+#endif
+            //connection_disconnect(win->conn);
+            virt_viewer_app_maybe_quit(priv->app, win);
+            break;
+        default:
+            break;
+    }
+    gtk_widget_destroy(dialog);
+}
+
+
+#ifdef USE_USBREDIR
+static void remove_cb(GtkContainer *container, GtkWidget *widget, void *data)
+{
+    gtk_window_resize(GTK_WINDOW(data), 1, 1);
+}
+GList *control_usb_configuration(GList *rules_ret, int *count, int action){
+    
+    gchar **keys = NULL;
+    gsize nkeys, i, j=0;
+    GError *error = NULL;
+    UsbredirDisplayRule *rule = NULL;
+    GList *rules = NULL;
+
+
+    keys = g_key_file_get_keys(keyfile, "usb", &nkeys, &error);
+    if (error != NULL) {
+        if (error->code != G_KEY_FILE_ERROR_GROUP_NOT_FOUND)
+            g_warning("Failed to read configuration file keys: %s", error->message);
+        g_clear_error(&error);
+        return NULL;
+    }
+
+    // at least three usb keys
+    if (nkeys < 3 || nkeys % 3 != 0){
+        g_warning("no keys found in usb");
+        return NULL;
+    }
+        
+
+    if(nkeys > 0)
+        g_return_if_fail(keys != NULL);
+
+    switch(action){
+        case CONF_WRITE:
+            // for(i = 0; i < *count; ++i){
+            // }
+            break;
+        case CONF_READ:
+            
+            for (i = 0; i < nkeys / 3 ; i++) {
+                if ( (g_str_equal(keys[i*3], "vender0") && g_str_equal(keys[i*3+1], "product0") && g_str_equal(keys[i*3+2], "desc0")) ||
+                    (g_str_equal(keys[i*3], "vender1") && g_str_equal(keys[i*3+1], "product1") && g_str_equal(keys[i*3+2], "desc1")) ||
+                    (g_str_equal(keys[i*3], "vender2") && g_str_equal(keys[i*3+1], "product2") && g_str_equal(keys[i*3+2], "desc2")) ||
+                    (g_str_equal(keys[i*3], "vender3") && g_str_equal(keys[i*3+1], "product3") && g_str_equal(keys[i*3+2], "desc3"))){
+                    rule = malloc(sizeof(UsbredirDisplayRule));
+                    
+                    rule->vender_id = g_key_file_get_string(keyfile, "usb", keys[i*3], &error);
+                    rule->product_id = g_key_file_get_string(keyfile, "usb", keys[i*3 + 1], &error);
+                    rule->desc = g_key_file_get_string(keyfile, "usb", keys[i*3 + 2], &error);
+                    if (!rule->vender_id || rule->vender_id == NULL)
+                        continue;
+
+                    if (!rule->product_id || rule->product_id == NULL)
+                        continue;
+
+                    if (!rule->desc || rule->desc == NULL)
+                        continue;
+
+                    if (strlen(rule->vender_id) == 0 || 
+                            strlen(rule->product_id) ==0 || strlen(rule->desc) == 0)
+                        continue;
+                    j++;
+                    rule->index = (int)(keys[i*3][strlen(keys[i*3]) - 1] - '0');
+                    usb_indexs[rule->index] = 1;
+                    g_message("print read configure %s, %s, %s, %d", rule->vender_id, rule->product_id, rule->desc, rule->index);
+                    rules = g_list_append(rules, rule);
+                }
+            }
+            *count = j;
+            break;
+        default:
+            break;
+    }
+
+    return rules;
+}
+
+typedef struct CheckDevice{
+    SpiceUsbDevice *device;
+    int index;
+}CheckDevice;
+
+static void auto_clicked_cb(GtkWidget *check, gpointer user_data){
+    CheckDevice *check_device;
+    gchar *desc;
+    char title_vid[10], title_pid[10], title_desc[10];
+    char value_vid[10], value_pid[10], value_desc[256];
+    check_device = g_object_get_data(G_OBJECT(check), "auto-usb-device");
+
+    int vid = spice_usb_device_get_vid(check_device->device);
+    int pid = spice_usb_device_get_pid(check_device->device);
+    desc = spice_usb_device_get_description(check_device->device, NULL);
+
+    if(check_device->index < 0 || check_device->index > 3){
+        return;
+    }
+    snprintf(title_vid, sizeof(title_vid), "vender%d", check_device->index);
+    snprintf(title_pid, sizeof(title_pid), "product%d", check_device->index);
+    snprintf(title_desc, sizeof(title_desc), "desc%d", check_device->index);
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check))){
+
+        snprintf(value_vid, sizeof(value_vid), "%x", vid);
+        snprintf(value_pid, sizeof(value_pid), "%x", pid);
+        snprintf(value_desc, sizeof(value_desc), "%s", desc);
+        g_message("click button and write to conf %s %s %d", value_vid, value_pid, check_device->index);
+        g_key_file_set_string(keyfile, "usb", title_vid, value_vid);
+        g_key_file_set_string(keyfile, "usb", title_pid, value_pid);
+        g_key_file_set_string(keyfile, "usb", title_desc, desc);
+    }
+    else{
+        g_message("click button and delete to conf %d", check_device->index);
+        g_key_file_set_string(keyfile, "usb", title_vid, "");
+        g_key_file_set_string(keyfile, "usb", title_pid, "");
+        g_key_file_set_string(keyfile, "usb", title_desc, "");
+    }
+
+    return;
+}
+static int find_avaliable_index(void){
+    int i;
+    for(i=0 ; i < 4; i++){
+        if(usb_indexs[i] == 0)
+            return i;
+    }
+    return -1;
+}
+static void select_auto_usb_devices(VirtViewerWindow *win)
+{
+    GtkWidget *dialog, *area;
+     /* Create the widgets */
+    SpiceUsbDeviceManager *manager;
+    GError *err = NULL;
+    GPtrArray *devices = NULL;
+    int i, j, index, auto_index=0,rules_count=0;
+    gboolean can_redirect, is_auto_connect = FALSE;
+    GtkWidget *align, *check, *label;
+    gchar *desc;
+    SpiceUsbDevice *device;
+    CheckDevice *check_device = NULL;
+    GList *rules= NULL;
+    UsbredirDisplayRule *rule=NULL;
+
+    dialog = gtk_dialog_new_with_buttons(
+                    _("Configure USB device to enable redirection in boot"),
+                    GTK_WINDOW(win->priv->window),
+                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                    _("_OK"), GTK_RESPONSE_ACCEPT,
+                    NULL);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_MENU);
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
+    
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
+    gtk_box_set_spacing(GTK_BOX(gtk_bin_get_child(GTK_BIN(dialog))), 12);
+
+    area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    label = gtk_label_new(_("Once checking, the device will connect to desktop automatically in next desktop boot."));  
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    gtk_box_pack_start(GTK_BOX(area), label, TRUE, TRUE , 1);   
+
+    // read current usb list in file
+    rules = control_usb_configuration(NULL, &rules_count, CONF_READ);
+        
+    // read current usb list in session
+    manager = spice_usb_device_manager_get(virt_viewer_window_getspice_session(win), &err);
+    if(err){
+        g_message("%s", err->message);
+        return;
+    }
+    devices = spice_usb_device_manager_get_devices(manager);
+
+    
+    for (i = 0; i < devices->len; i++){
+        is_auto_connect = FALSE;
+        device = g_ptr_array_index(devices, i);
+        if(err)
+            g_clear_error(&err);
+        
+        can_redirect = spice_usb_device_manager_can_redirect_device(manager, device, &err);
+
+        if (!can_redirect) 
+            continue;
+
+        // find if in configure rules
+        for(j = 0; j< rules_count; ++j){
+            rule = (UsbredirDisplayRule *)g_list_nth_data(rules, j);
+            if(!rule){
+                continue;
+            }
+            int vid = (int)strtol(rule->vender_id, NULL, 16);
+            int pid = (int)strtol(rule->product_id, NULL, 16);
+            if(vid == spice_usb_device_get_vid(device) && 
+                pid == spice_usb_device_get_pid(device)){
+                is_auto_connect = TRUE;
+                auto_index = rule->index;
+                rules = g_list_remove(rules, rule);
+                break;
+            }
+        }
+
+        desc = spice_usb_device_get_description(device, NULL);
+        check = gtk_check_button_new_with_label(desc);
+        g_free(desc);
+
+        align = gtk_alignment_new(0, 0, 0, 0);
+        gtk_alignment_set_padding(GTK_ALIGNMENT(align), 0, 0, 12, 0);
+        gtk_container_add(GTK_CONTAINER(align), check);
+        gtk_box_pack_end(GTK_BOX(area), align, FALSE, FALSE, 0);
+        check_device = malloc(sizeof(CheckDevice));
+        check_device->device = device;
+        
+        if(is_auto_connect)
+            check_device->index =  auto_index;
+        else{
+            index = find_avaliable_index();
+            if(index>=0){
+                check_device->index = index;
+                usb_indexs[check_device->index] = 1;
+            }
+            else{
+                check_device->index = -1;
+            }
+        }
+        
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check), is_auto_connect);
+        g_warning("is auto reconnct %d index %d rules count  %d", is_auto_connect, check_device->index, rules_count);
+        g_object_set_data(
+            G_OBJECT(check), "auto-usb-device", check_device);
+
+        g_signal_connect(G_OBJECT(check), "clicked",
+                     G_CALLBACK(auto_clicked_cb), check);
+        
+        gtk_widget_show_all(check);
+        
+    }
+
+    GList *l = NULL;
+ 
+    for(l = rules;  l != NULL; l = l->next){
+
+        rule = (UsbredirDisplayRule *)(l->data);
+        if(!rule)
+            continue;
+        g_message("vender_id %s", rule->vender_id);
+        g_message("product_id %s", rule->product_id);
+        check = gtk_check_button_new_with_label(rule->desc);
+        align = gtk_alignment_new(0, 0, 0, 0);
+        gtk_alignment_set_padding(GTK_ALIGNMENT(align), 0, 0, 12, 0);
+        
+        gtk_container_add(GTK_CONTAINER(align), check);
+        gtk_box_pack_end(GTK_BOX(area), align, FALSE, FALSE, 0);
+        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check), TRUE);
+        gtk_widget_set_sensitive(GTK_WIDGET(check), FALSE);
+
+    }
+    gtk_window_set_keep_above(GTK_WINDOW(win->priv->window), FALSE);
+    /* show and run */
+    gtk_widget_show_all(dialog);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+
+    g_list_free(l);
+    g_list_free(rules);
+}
+
+static void usb_connect_failed(GObject               *object,
+                               SpiceUsbDevice        *device,
+                               GError                *error,
+                               gpointer               data)
+{
+    GtkWidget *dialog;
+
+    if (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_CANCELLED)
+        return;
+
+    dialog = gtk_message_dialog_new(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_CLOSE,
+                                    _("USB redirection error"));
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog),
+                                             "%s", error->message);
+    
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+
+static void select_usb_devices(VirtViewerWindow *win)
+{
+    GtkWidget *dialog, *area, *usb_device_widget;
+     /* Create the widgets */
+    
+    dialog = gtk_dialog_new_with_buttons(
+                    _("Select USB devices for redirection"),
+                    GTK_WINDOW(win->priv->window),
+                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                    _("_Close"), GTK_RESPONSE_ACCEPT,
+                    NULL);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_MENU);
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
+    
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
+    gtk_box_set_spacing(GTK_BOX(gtk_bin_get_child(GTK_BIN(dialog))), 12);
+
+    area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    usb_device_widget = spice_usb_device_widget_new(virt_viewer_window_getspice_session(win),
+                                                    NULL); /* default format */
+
+    g_signal_connect(usb_device_widget, "connect-failed",
+                     G_CALLBACK(usb_connect_failed), NULL);
+
+    gtk_box_pack_start(GTK_BOX(area), usb_device_widget, TRUE, TRUE, 0);
+
+    /* This shrinks the dialog when USB devices are unplugged */
+    g_signal_connect(usb_device_widget, "remove",
+                     G_CALLBACK(remove_cb), dialog);
+
+    gtk_window_set_keep_above(GTK_WINDOW(win->priv->window), FALSE);
+    /* show and run */
+    gtk_widget_show_all(dialog);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+static void menu_cb_select_usb_devices(GtkAction *action, void *data)
+{
+    VirtViewerWindow *win = data;
+    select_usb_devices(win);
+}
+
+static void menu_cb_select_auto_usb_devices(GtkAction *action, void *data)
+{
+    VirtViewerWindow *win = data;
+    select_auto_usb_devices(win);
+}
+#endif
+
+typedef struct {
+    GtkWidget *vbox;
+    GtkWidget *hbox;
+    GtkWidget *entry;
+    GtkWidget *error_label;
+    GtkWidget *label;
+    VirtViewerWindow *win;
+    int pop_action;
+} PasswordWidgets;
+
+static void check_password(GtkDialog *dialog, gint reponse_id, gpointer data){
+    
+     PasswordWidgets *passwdWidget = data;
+     const gchar *passwd;
+     if(reponse_id == GTK_RESPONSE_ACCEPT){
+        gtk_label_set_text(GTK_LABEL(passwdWidget->error_label), "");
+        passwd = gtk_entry_get_text(GTK_ENTRY(passwdWidget->entry));
+        if(g_str_equal(passwd, "oe1234")){
+            switch(passwdWidget->pop_action){
+                case 1:
+                    pop_close_window(passwdWidget->win, TRUE, 2);
+                    break;
+                case 0:
+                    pop_poweroff_window(passwdWidget->win);
+                    break;
+                default:
+                    break; 
+            }
+        }
+        else{
+            gtk_label_set_text(GTK_LABEL(passwdWidget->error_label), _("incorrect password!"));
+            return;
+        }
+    }
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
+static void ask_to_verify_to_password(VirtViewerWindow *widget, gpointer data, int pop_action){
+
+    VirtViewerWindow *win = data;
+	VirtViewerWindowPrivate *priv = win->priv;
+    GtkWidget *area;
+    PasswordWidgets *passwdWidget = g_new0(PasswordWidgets, 1);
+    passwdWidget->win = win;
+    passwdWidget->pop_action = pop_action;
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+                    _("Verification"),
+                    GTK_WINDOW(priv->window),
+                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                    _("_OK"), GTK_RESPONSE_ACCEPT,       
+                    _("_Cancel"), GTK_RESPONSE_CANCEL,
+                    NULL);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_MENU);
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
+    gtk_box_set_spacing(GTK_BOX(gtk_bin_get_child(GTK_BIN(dialog))), 20);
+    gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_CANCEL);
+    
+    passwdWidget->error_label = gtk_label_new("");
+    gtk_misc_set_alignment(GTK_MISC(passwdWidget->error_label), 0.0, 0.5);
+
+    passwdWidget->label = gtk_label_new(_("Password:"));  
+    gtk_misc_set_alignment(GTK_MISC(passwdWidget->label), 0.0, 0.5);
+
+    passwdWidget->entry = gtk_entry_new();
+    
+    gtk_entry_set_visibility(GTK_ENTRY(passwdWidget->entry), FALSE);
+#if GTK_CHECK_VERSION(3, 12, 0)
+    gtk_entry_set_max_width_chars(GTK_ENTRY(passwdWidget->entry), 6);
+#endif
+    area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+#if GTK_CHECK_VERSION(3,0,0)
+    passwdWidget->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    passwdWidget->vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+#else
+    passwdWidget->vbox = gtk_vbox_new(FALSE, 1);
+    passwdWidget->hbox = gtk_hbox_new(FALSE, 1);
+#endif
+
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_widget_set_halign(passwdWidget->label, GTK_ALIGN_START);
+    gtk_widget_set_valign(passwdWidget->entry, GTK_ALIGN_CENTER);
+#endif
+
+#if GTK_CHECK_VERSION(3,10,0)
+    gtk_widget_set_valign(passwdWidget->label, GTK_ALIGN_BASELINE);
+#endif
+
+    gtk_box_pack_start(GTK_BOX(passwdWidget->hbox), passwdWidget->label, TRUE, TRUE, 6); 
+    gtk_box_pack_start(GTK_BOX(passwdWidget->hbox), passwdWidget->entry, TRUE, TRUE, 0);
+
+    gtk_box_pack_start(GTK_BOX(passwdWidget->vbox),
+                   passwdWidget->hbox, TRUE, TRUE, 6);
+    gtk_box_pack_start(GTK_BOX(passwdWidget->vbox), passwdWidget->error_label, TRUE, TRUE, 6);
+
+
+    gtk_box_pack_start(GTK_BOX(area),
+                       passwdWidget->vbox, TRUE, TRUE, 6);
+
+    g_signal_connect(dialog, "response",
+                     G_CALLBACK(check_password), passwdWidget);
+
+    gtk_window_set_keep_above(GTK_WINDOW(priv->window), FALSE);
+    /* show and run */
+    gtk_widget_show_all(dialog);
+    
+    gtk_dialog_run(GTK_DIALOG(dialog));
+}
+
+static void ask_to_close_windows_with_password(VirtViewerWindow *widget,  gpointer data){
+    if(passwd_is_needed)
+        ask_to_verify_to_password(widget, data, 1);
+    else {
+        pop_close_window(data, TRUE, 2);
+    }
+}
+
+static void ask_to_close_windows(VirtViewerWindow *widget,  gpointer data){
+    pop_close_window(data, FALSE, 1);
+}
+
+GOptionGroup*
+virt_viewer_window_get_option_group(void)
+{
+    static const GOptionEntry options [] = {
+        { "toolbar", '\0', 0, G_OPTION_ARG_NONE, &enable_toolbar,
+          N_("enable toolbar"), NULL },
+        { "modeVM", '\0', 0, G_OPTION_ARG_NONE, &is_mode_vm,
+          N_("is mode VM"), NULL },
+        { "forceFullscreen", '\0', 0, G_OPTION_ARG_NONE, &complete_fullscreen,
+          N_("Force in a fullscreen mode"), NULL },
+        { "exitNeedPassword", '\0', 0, G_OPTION_ARG_NONE, &passwd_is_needed,
+          N_("require password when exit"), NULL },
+        { "title", '\0', 0, G_OPTION_ARG_STRING, &title,
+          N_("Set the window title"), NULL },
+        { NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
+    };
+    GOptionGroup *group;
+    group = g_option_group_new("virt-viewer", NULL, NULL, NULL, NULL);
+    g_option_group_add_entries(group, options);
+
+    return group;
+}
+
+static SpiceMainChannel*
+get_main(VirtViewerDisplay *self)
+{
+    VirtViewerSessionSpice *session;
+
+    session = VIRT_VIEWER_SESSION_SPICE(virt_viewer_display_get_session(self));
+
+    return virt_viewer_session_spice_get_main_channel(session);
+}
+
+static const char *spice_gtk_session_properties[] = {
+    "auto-clipboard",
+    "auto-usbredir",
+};
+
+
+
+static gboolean is_gtk_session_property(const gchar *property)
+{
+    int i;
+
+    for (i = 0; i < G_N_ELEMENTS(spice_gtk_session_properties); i++) {
+        if (!strcmp(spice_gtk_session_properties[i], property)) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+static void restore_configuration(VirtViewerWindow *win)
+{
+    gboolean state;
+    gchar *str;
+    gchar **keys = NULL;
+    gsize nkeys, i;
+    GError *error = NULL;
+    gpointer object;
+    gint loop_time;
+
+    keys = g_key_file_get_keys(keyfile, "general", &nkeys, &error);
+    if (error != NULL) {
+        if (error->code != G_KEY_FILE_ERROR_GROUP_NOT_FOUND)
+            g_warning("Failed to read configuration file keys: %s", error->message);
+        g_clear_error(&error);
+        return;
+    }
+
+    if (nkeys > 0)
+        g_return_if_fail(keys != NULL);
+
+    for (i = 0; i < nkeys; ++i) {
+        if (g_str_equal(keys[i], "grab-sequence"))
+            continue;
+        state = g_key_file_get_boolean(keyfile, "general", keys[i], &error);
+        if (error != NULL) {
+            g_clear_error(&error);
+            continue;
+        }
+
+        if (is_gtk_session_property(keys[i])) {
+            object = virt_viewer_window_getspice_session(win);
+        } else {
+            object = win->priv->display;
+        }
+        g_object_set(object, keys[i], state, NULL);
+    }
+
+    g_strfreev(keys);
+
+    str = g_key_file_get_string(keyfile, "general", "grab-sequence", &error);
+    if (error == NULL) {
+        SpiceGrabSequence *seq = spice_grab_sequence_new_from_string(str);
+        spice_display_set_grab_keys(SPICE_DISPLAY(win->priv->display), seq);
+        spice_grab_sequence_free(seq);
+        g_free(str);
+    }
+    g_clear_error(&error);
+
+    /*loop_time = g_key_file_get_integer(keyfile, "general", "loop_time", &error);
+    if(error == NULL)
+    {
+        if(loop_time < 800){
+            loop_time = 1000;
+        }
+        win->loop_time = loop_time;
+    }*/
+
+    g_clear_error(&error);
+}
+
+static void menu_cb_mouse_mode(GtkAction *action, void *data)
+{
+    VirtViewerWindow *win = data;
+    SpiceMainChannel *cmain = get_main(win->priv->display);
+    int mode;
+    GtkWidget *label, *area;
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+                    _("Switch Mouse Mode"),
+                    GTK_WINDOW(win->priv->window),
+                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                    _("_OK"), GTK_RESPONSE_ACCEPT,
+                    _("_Cancel"), GTK_RESPONSE_CANCEL,
+                    NULL);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_MENU);
+    gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
+    gtk_box_set_spacing(GTK_BOX(gtk_bin_get_child(GTK_BIN(dialog))), 20);
+    gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_CANCEL);
+    
+    label = gtk_label_new(_("Mouse switches between server mode and client side mode, please do this when mouse is abnormal, you can switch with shortcut key (Shift+F12)."));  
+    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+    area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    gtk_box_pack_start(GTK_BOX(area), label, TRUE, TRUE, 0); 
+
+    gtk_window_set_keep_above(GTK_WINDOW(win->priv->window), FALSE);
+    
+    /* show and run */
+    gtk_widget_show_all(dialog);
+    gint result = gtk_dialog_run(GTK_DIALOG(dialog));
+
+    switch (result) {
+        case GTK_RESPONSE_ACCEPT:
+            
+            g_object_get(cmain, "mouse-mode", &mode, NULL);
+            if (mode == SPICE_MOUSE_MODE_CLIENT)
+                mode = SPICE_MOUSE_MODE_SERVER;
+            else
+                mode = SPICE_MOUSE_MODE_CLIENT;
+
+            spice_main_request_mouse_mode(cmain, mode);
+            break;
+
+        default:
+            break;
+    }
+    gtk_widget_destroy(dialog);   
+}
+
 
 static void
 virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
 {
     GtkWidget *button;
-    VirtViewerWindowPrivate *priv = self->priv;
-
+	GtkWidget *exitVDI;
+	VirtViewerWindowPrivate *priv = self->priv;
+    
     priv->toolbar = g_object_ref(gtk_toolbar_new());
     gtk_toolbar_set_show_arrow(GTK_TOOLBAR(priv->toolbar), FALSE);
     gtk_widget_set_no_show_all(priv->toolbar, TRUE);
     gtk_toolbar_set_style(GTK_TOOLBAR(priv->toolbar), GTK_TOOLBAR_BOTH_HORIZ);
 
-    /* Close connection */
-    button = GTK_WIDGET(gtk_tool_button_new_from_stock(GTK_STOCK_CLOSE));
-    gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Disconnect"));
-    gtk_widget_show(GTK_WIDGET(button));
-    gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM (button), 0);
-    g_signal_connect(button, "clicked", G_CALLBACK(virt_viewer_window_menu_file_quit), self);
+    //Close connection
+   /*   //button = GTK_WIDGET(gtk_tool_button_new_from_stock(GTK_STOCK_CLOSE));
+    //gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Disconnect"));
+    //gtk_widget_show(GTK_WIDGET(button));
+    //gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM (button), 0);
+    //g_signal_connect(button, "clicked", G_CALLBACK(virt_viewer_window_menu_file_quit), self);
 
-    /* USB Device selection */
+    // USB Device selection
     button = gtk_image_new_from_icon_name("virt-viewer-usb",
                                           GTK_ICON_SIZE_INVALID);
     button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
@@ -1118,10 +2186,10 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
     gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM(button), 0);
     g_signal_connect(button, "clicked", G_CALLBACK(virt_viewer_window_menu_file_usb_device_selection), self);
     priv->toolbar_usb_device_selection = button;
-    gtk_widget_show_all(button);
+    //gtk_widget_show_all(button);
 
-    /* Send key */
-    button = GTK_WIDGET(gtk_tool_button_new(NULL, NULL));
+    // Send key 
+  button = GTK_WIDGET(gtk_tool_button_new(NULL, NULL));
     gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(button), "preferences-desktop-keyboard-shortcuts");
     gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Send key combination"));
     gtk_widget_show(GTK_WIDGET(button));
@@ -1130,14 +2198,139 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
     gtk_widget_set_sensitive(button, FALSE);
     priv->toolbar_send_key = button;
 
-    /* Leave fullscreen */
+    // Leave fullscreen 
     button = GTK_WIDGET(gtk_tool_button_new_from_stock(GTK_STOCK_LEAVE_FULLSCREEN));
     gtk_tool_button_set_label(GTK_TOOL_BUTTON(button), _("Leave fullscreen"));
     gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Leave fullscreen"));
     gtk_tool_item_set_is_important(GTK_TOOL_ITEM(button), TRUE);
     gtk_widget_show(GTK_WIDGET(button));
     gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM(button), 0);
-    g_signal_connect(button, "clicked", G_CALLBACK(virt_viewer_window_toolbar_leave_fullscreen), self);
+    g_signal_connect(button, "clicked", G_CALLBACK(virt_viewer_window_toolbar_leave_fullscreen), self);*/
+			
+	 if(complete_fullscreen){
+        // TODO change icon
+        button = gtk_image_new_from_icon_name("close-vdi",
+                                              GTK_ICON_SIZE_INVALID);
+        button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
+        gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Close Client"));
+    
+    }
+    else{
+       button = gtk_image_new_from_icon_name("window-vdi",
+                                              GTK_ICON_SIZE_INVALID);
+       button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
+       gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Exit Fullscreen"));
+    }
+
+    gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM (button), 0);
+    if(complete_fullscreen){
+        g_signal_connect(button, "clicked", G_CALLBACK(ask_to_close_windows_with_password), self);
+    }
+    else{
+        g_signal_connect(button, "clicked", G_CALLBACK(virt_viewer_window_toolbar_leave_fullscreen), self);
+    }
+    gtk_widget_show_all (GTK_WIDGET (button));
+
+    button = GTK_WIDGET(gtk_separator_tool_item_new());
+    gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM (button), 0);
+    gtk_widget_show_all (GTK_WIDGET (button));
+
+	
+	if(!is_mode_vm){
+					/* Close connection */
+					exitVDI = gtk_image_new_from_icon_name("exit-vdi-1",
+																								GTK_ICON_SIZE_INVALID);
+					
+					exitVDI = GTK_WIDGET(gtk_tool_button_new(exitVDI, NULL));
+					gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(exitVDI), _("Exit Desktop"));
+					gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM (exitVDI), 0);
+					gtk_widget_set_name(GTK_WIDGET(exitVDI), "exit-vdi");
+					g_signal_connect(exitVDI, "clicked", G_CALLBACK(ask_to_close_windows), self);
+					gtk_widget_set_sensitive(exitVDI, enable_toolbar);
+					gtk_widget_show_all (GTK_WIDGET (exitVDI));
+			}
+			
+			button = gtk_image_new_from_icon_name("mouse-mode-1",
+																						GTK_ICON_SIZE_INVALID);
+			button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
+	
+			gtk_tool_item_set_tooltip_text (GTK_TOOL_ITEM (button), _("Switch Mouse Mode"));
+			gtk_toolbar_insert (GTK_TOOLBAR (priv->toolbar), GTK_TOOL_ITEM (button), 0);
+			g_signal_connect (button, "clicked", G_CALLBACK (menu_cb_mouse_mode), self);
+			gtk_widget_set_sensitive(button, enable_toolbar);
+			gtk_widget_show_all (GTK_WIDGET (button));
+	
+			/* Send key */
+			button = gtk_image_new_from_icon_name("send-alt-1",
+																						GTK_ICON_SIZE_INVALID);
+			button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
+			
+			gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Send Ctrl+Alt+Delete"));
+			gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM(button), 0);
+     		g_signal_connect(button, "clicked", G_CALLBACK(menu_cb_sending_keys), self);
+			gtk_widget_set_sensitive(button, enable_toolbar);
+			gtk_widget_show_all(GTK_WIDGET(button));
+	
+			/* USB Device selection */
+			 //USE_USBREDIR
+#ifdef  USE_USBREDIR
+			GtkWidget *menu;
+			GtkWidget *usb_item;
+			GtkWidget *usb_auto_item;
+	
+			menu = gtk_menu_new();
+			gtk_widget_set_name(menu, "usb_menu");
+	
+			usb_item = gtk_menu_item_new_with_label(_("Select usb redirection"));
+			usb_auto_item = gtk_menu_item_new_with_label(_("Configure automatic redirection"));
+	
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), usb_item);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), usb_auto_item);
+	
+			g_signal_connect(usb_item, "activate", G_CALLBACK(menu_cb_select_usb_devices), self);
+			
+			g_signal_connect(usb_auto_item, "activate", G_CALLBACK(menu_cb_select_auto_usb_devices), self);
+	
+			button = gtk_image_new_from_icon_name("usb-redir-1",
+																						GTK_ICON_SIZE_INVALID);
+			button = GTK_WIDGET(gtk_menu_tool_button_new(button, NULL));
+	
+			gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("USB"));
+			gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM(button), 0);
+			gtk_container_set_border_width(GTK_CONTAINER(menu), 0);
+			gtk_widget_set_sensitive(button, enable_toolbar);
+			gtk_menu_tool_button_set_menu(GTK_MENU_TOOL_BUTTON(button), menu);
+			gtk_widget_show_all(menu);
+			gtk_widget_show_all(button);
+#endif
+			/* Poweroff function */
+			button = gtk_image_new_from_icon_name("power-off-vdi-1",
+																						GTK_ICON_SIZE_INVALID);
+			button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
+			gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Forced Poweroff"));
+			
+			gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM (button), 0);
+			g_signal_connect(button, "clicked", G_CALLBACK(menu_cb_poweroff), self);
+	
+			gtk_widget_set_sensitive(button, enable_toolbar);
+			gtk_widget_show_all (GTK_WIDGET (button));
+	
+	
+			
+			button = GTK_WIDGET(gtk_separator_tool_item_new());
+			gtk_toolbar_insert(GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM (button), 0);
+			gtk_widget_show_all (GTK_WIDGET (button));
+	
+			/* main text */
+			button = gtk_image_new_from_icon_name("PC-vdi-1",
+																						GTK_ICON_SIZE_INVALID);
+			button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
+			gtk_tool_button_set_label(GTK_TOOL_BUTTON(button), title);
+			gtk_tool_item_set_is_important(GTK_TOOL_ITEM(button), TRUE);
+			gtk_widget_show(GTK_WIDGET (button));
+			gtk_toolbar_insert (GTK_TOOLBAR(priv->toolbar), GTK_TOOL_ITEM (button), 0);
+			gtk_widget_set_sensitive(button, FALSE);
+			gtk_widget_show_all (GTK_WIDGET (button));
 
     priv->layout = ViewAutoDrawer_New();
 
@@ -1254,7 +2447,7 @@ virt_viewer_window_set_usb_options_sensitive(VirtViewerWindow *self, gboolean se
     priv = self->priv;
     menu = GTK_WIDGET(gtk_builder_get_object(priv->builder, "menu-file-usb-device-selection"));
     gtk_widget_set_sensitive(menu, sensitive);
-    gtk_widget_set_visible(priv->toolbar_usb_device_selection, sensitive);
+   // gtk_widget_set_visible(priv->toolbar_usb_device_selection, sensitive);
 }
 
 static void
@@ -1332,7 +2525,7 @@ virt_viewer_window_set_display(VirtViewerWindow *self, VirtViewerDisplay *displa
             virt_viewer_window_desktop_resize(display, self);
 
         gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(self->priv->builder, "menu-send")), TRUE);
-        gtk_widget_set_sensitive(self->priv->toolbar_send_key, TRUE);
+        //gtk_widget_set_sensitive(self->priv->toolbar_send_key, TRUE);
     }
 }
 

@@ -624,7 +624,48 @@ remote_viewer-virt-viewer-window.o: virt-viewer-window.c \
  virt-viewer-notebook.h virt-viewer-display.h virt-viewer-enums.h \
  virt-viewer-session.h virt-viewer-app.h virt-viewer-util.h \
  virt-viewer-file.h virt-glib-compat.h view/autoDrawer.h view/drawer.h \
- view/ovBox.h
+ view/ovBox.h virt-viewer-session-spice.h \
+ /usr/local/include/spice-client-gtk-3.0/spice-widget.h \
+ /usr/local/include/spice-client-glib-2.0/spice-client.h \
+ /usr/local/include/spice-1/spice/enums.h \
+ /usr/local/include/spice-1/spice/protocol.h \
+ /usr/local/include/spice-1/spice/types.h \
+ /usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /usr/local/include/spice-1/spice/macros.h \
+ /usr/local/include/spice-1/spice/start-packed.h \
+ /usr/local/include/spice-1/spice/end-packed.h \
+ /usr/local/include/spice-client-glib-2.0/spice-types.h \
+ /usr/local/include/spice-client-glib-2.0/spice-session.h \
+ /usr/local/include/spice-client-glib-2.0/spice-uri.h \
+ /usr/local/include/spice-client-glib-2.0/spice-glib-enums.h \
+ /usr/local/include/spice-client-glib-2.0/spice-util.h \
+ /usr/local/include/spice-client-glib-2.0/spice-channel.h \
+ /usr/local/include/spice-client-glib-2.0/spice-option.h \
+ /usr/local/include/spice-client-glib-2.0/spice-version.h \
+ /usr/local/include/spice-client-glib-2.0/channel-main.h \
+ /usr/local/include/spice-client-glib-2.0/spice-client.h \
+ /usr/local/include/spice-client-glib-2.0/channel-display.h \
+ /usr/local/include/spice-client-glib-2.0/channel-cursor.h \
+ /usr/local/include/spice-client-glib-2.0/channel-inputs.h \
+ /usr/local/include/spice-client-glib-2.0/channel-playback.h \
+ /usr/local/include/spice-client-glib-2.0/channel-record.h \
+ /usr/local/include/spice-client-glib-2.0/channel-smartcard.h \
+ /usr/local/include/spice-client-glib-2.0/channel-usbredir.h \
+ /usr/local/include/spice-client-glib-2.0/channel-port.h \
+ /usr/local/include/spice-client-glib-2.0/channel-webdav.h \
+ /usr/local/include/spice-client-glib-2.0/smartcard-manager.h \
+ /usr/local/include/spice-client-glib-2.0/usb-device-manager.h \
+ /usr/local/include/spice-client-glib-2.0/spice-audio.h \
+ /usr/local/include/spice-client-glib-2.0/spice-file-transfer-task.h \
+ /usr/local/include/spice-client-gtk-3.0/spice-grabsequence.h \
+ /usr/local/include/spice-client-gtk-3.0/spice-widget-enums.h \
+ /usr/local/include/spice-client-glib-2.0/spice-util.h \
+ /usr/local/include/spice-client-gtk-3.0/spice-gtk-session.h \
+ /usr/local/include/spice-client-glib-2.0/spice-audio.h \
+ /usr/local/include/spice-client-gtk-3.0/spice-client-gtk.h \
+ /usr/local/include/spice-client-gtk-3.0/spice-widget.h \
+ /usr/local/include/spice-client-gtk-3.0/usb-device-widget.h
 
 /usr/include/stdc-predef.h:
 
@@ -2005,3 +2046,89 @@ view/autoDrawer.h:
 view/drawer.h:
 
 view/ovBox.h:
+
+virt-viewer-session-spice.h:
+
+/usr/local/include/spice-client-gtk-3.0/spice-widget.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-client.h:
+
+/usr/local/include/spice-1/spice/enums.h:
+
+/usr/local/include/spice-1/spice/protocol.h:
+
+/usr/local/include/spice-1/spice/types.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+/usr/local/include/spice-1/spice/macros.h:
+
+/usr/local/include/spice-1/spice/start-packed.h:
+
+/usr/local/include/spice-1/spice/end-packed.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-types.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-session.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-uri.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-glib-enums.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-util.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-channel.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-option.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-version.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-main.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-client.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-display.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-cursor.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-inputs.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-playback.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-record.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-smartcard.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-usbredir.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-port.h:
+
+/usr/local/include/spice-client-glib-2.0/channel-webdav.h:
+
+/usr/local/include/spice-client-glib-2.0/smartcard-manager.h:
+
+/usr/local/include/spice-client-glib-2.0/usb-device-manager.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-audio.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-file-transfer-task.h:
+
+/usr/local/include/spice-client-gtk-3.0/spice-grabsequence.h:
+
+/usr/local/include/spice-client-gtk-3.0/spice-widget-enums.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-util.h:
+
+/usr/local/include/spice-client-gtk-3.0/spice-gtk-session.h:
+
+/usr/local/include/spice-client-glib-2.0/spice-audio.h:
+
+/usr/local/include/spice-client-gtk-3.0/spice-client-gtk.h:
+
+/usr/local/include/spice-client-gtk-3.0/spice-widget.h:
+
+/usr/local/include/spice-client-gtk-3.0/usb-device-widget.h:
