@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: virt-viewer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-25 16:22+0800\n"
+"POT-Creation-Date: 2016-05-07 16:13+0800\n"
 "PO-Revision-Date: 2015-01-12 11:21+0000\n"
 "Last-Translator: Daniel Berrange <dan-transifex@berrange.com>\n"
 "Language-Team: Gujarati (http://www.transifex.com/projects/p/virt-viewer/"
@@ -21,8 +21,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#. GOptionGroup *app_options_new = NULL;
-#: ../data/remote-viewer.desktop.in.h:1 ../src/remote-viewer-main.c:159
+#: ../data/remote-viewer.desktop.in.h:1 ../src/remote-viewer-main.c:161
 msgid "Remote Viewer"
 msgstr "દૂરસ્થ દર્શક"
 
@@ -83,39 +82,36 @@ msgstr "remote-viewer આવૃત્તિ %s\n"
 msgid "Network failure, please check the network"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:137 ../src/virt-viewer-main.c:60
-msgid "Display version information"
+#: ../src/remote-viewer-main.c:138
+#, fuzzy
+msgid "Display version and quit"
 msgstr "આવૃત્તિ જાણકારીને બતાવો"
 
-#: ../src/remote-viewer-main.c:139
+#: ../src/remote-viewer-main.c:140
 msgid "Set window title"
 msgstr "વિન્ડો શીર્ષક સુયોજિત કરો"
 
-#: ../src/remote-viewer-main.c:141
+#: ../src/remote-viewer-main.c:142
 msgid "Spice server address"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:143
+#: ../src/remote-viewer-main.c:144
 msgid "Spice server port"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:145
+#: ../src/remote-viewer-main.c:146
 msgid "Spice server secure port"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:147
+#: ../src/remote-viewer-main.c:148
 msgid "Server password"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:150
+#: ../src/remote-viewer-main.c:152
 msgid "Open connection using Spice controller communication"
 msgstr "Spice નિયંત્રક વાર્તાલાપની મદદથી જોડાણને ખોલો"
 
-#: ../src/remote-viewer-main.c:163
-msgid "Remote viewer client"
-msgstr "- દૂરસ્થ દર્શક ક્લાયન્ટ"
-
-#: ../src/remote-viewer-main.c:183
+#: ../src/remote-viewer-main.c:186
 #, c-format
 msgid ""
 "%s\n"
@@ -124,12 +120,12 @@ msgstr ""
 "%s\n"
 "ઉપલબ્ધ આદેશ વાક્ય વિકલ્પોની સંપૂર્ણ યાદીને જોવા માટે '%s --help' ચલાવો\n"
 
-#: ../src/remote-viewer-main.c:195
+#: ../src/remote-viewer-main.c:198
 #, c-format
 msgid "Error: extra arguments given while using Spice controller\n"
 msgstr "ભૂલ: વધારાની દલીલો આપેલ છે જ્યારે Spice નિયંત્રકને વાપરી રહ્યા હોય\n"
 
-#: ../src/remote-viewer-main.c:202
+#: ../src/remote-viewer-main.c:205
 #, c-format
 msgid "Error: can't handle multiple URIs\n"
 msgstr "ભૂલ: ઘણી URIs ને સંભાળી શકાતી નથી\n"
@@ -280,58 +276,58 @@ msgstr ""
 msgid "The Fedora Translation Team"
 msgstr "Fedora અનુવાદ ટીમ"
 
-#: ../src/virt-viewer-app.c:490
+#: ../src/virt-viewer-app.c:493
 msgid "Do you want to close the session?"
 msgstr "શું તમે આ સત્રને બંધ કરવા માંગો છો?"
 
-#: ../src/virt-viewer-app.c:492
+#: ../src/virt-viewer-app.c:495
 msgid "Do not ask me again"
 msgstr "મને ફરી વાર પૂછશો નહિં"
 
-#: ../src/virt-viewer-app.c:954
+#: ../src/virt-viewer-app.c:957
 #, c-format
 msgid "Waiting for display %d..."
 msgstr "%d ને દર્શાવવા માટે રાહ જોઇ રહ્યા છે..."
 
-#: ../src/virt-viewer-app.c:1063
+#: ../src/virt-viewer-app.c:1066
 #, c-format
 msgid "Unknown graphic type for the guest %s"
 msgstr "મહેમાન %s માટે અજ્ઞાત ગ્રાફિક પ્રકાર"
 
-#: ../src/virt-viewer-app.c:1144
+#: ../src/virt-viewer-app.c:1147
 msgid "Connect to ssh failed."
 msgstr "ssh સાથે જોડાવાનું નિષ્ફળ."
 
-#: ../src/virt-viewer-app.c:1146
+#: ../src/virt-viewer-app.c:1149
 msgid "Can't connect to channel, SSH only supported."
 msgstr "ચેનલમાં જોડાઇ શકતા નથી, SSH ફક્ત આધારભૂત છે."
 
-#: ../src/virt-viewer-app.c:1158
+#: ../src/virt-viewer-app.c:1161
 msgid "Connect to channel unsupported."
 msgstr "ચેનલમાં જોડાવાનુ બિનઆધારભૂત છે."
 
-#: ../src/virt-viewer-app.c:1220
+#: ../src/virt-viewer-app.c:1223
 msgid "Display can only be attached through libvirt with --attach"
 msgstr ""
 
-#: ../src/virt-viewer-app.c:1243
+#: ../src/virt-viewer-app.c:1246
 msgid "Connecting to graphic server"
 msgstr "ગ્રાફિક સર્વરમાં જોડાઇ રહ્યા છે"
 
-#: ../src/virt-viewer-app.c:1342
+#: ../src/virt-viewer-app.c:1345
 msgid "Guest domain has shutdown"
 msgstr "મહેમાન ડોમેઇન બંધ થઇ ગયો"
 
-#: ../src/virt-viewer-app.c:1403
+#: ../src/virt-viewer-app.c:1406
 msgid "Connected to graphic server"
 msgstr "ગ્રાફિક સર્વરમાં જોડાયેલ છે"
 
-#: ../src/virt-viewer-app.c:1430
+#: ../src/virt-viewer-app.c:1433
 #, c-format
 msgid "Unable to connect to the graphic server %s"
 msgstr "ગ્રાફિક સર્વર %s માં જોડાવામાં અસમર્થ"
 
-#: ../src/virt-viewer-app.c:1462
+#: ../src/virt-viewer-app.c:1465
 #, c-format
 msgid ""
 "Unable to authenticate with remote desktop server at %s: %s\n"
@@ -340,62 +336,72 @@ msgstr ""
 "%s પર દૂરસ્થ ડેસ્કટોપ સાથે સત્તાધિકરણ કરવાનું અસમર્થ: %s\n"
 "ફરીથી જોડાણનો પુન:પ્રયત્ન કરો?"
 
-#: ../src/virt-viewer-app.c:1482
+#: ../src/virt-viewer-app.c:1485
 #, c-format
 msgid "Unable to authenticate with remote desktop server: %s"
 msgstr "દૂરસ્થ ડેસ્કટોપ સર્વર સાથે સત્તાધિકરણ કરવાનું અસમર્થ: %s"
 
-#: ../src/virt-viewer-app.c:1490
+#: ../src/virt-viewer-app.c:1493
 #, c-format
 msgid "USB redirection error: %s"
 msgstr "USB પુનર્નિર્દેશન ભૂલ: %s"
 
-#: ../src/virt-viewer-app.c:1783
+#: ../src/virt-viewer-app.c:1786
 #, c-format
 msgid "Zoom level must be within %d-%d\n"
 msgstr "નાનું મોટુ કરવાનું લેવલ એ %d-%d માં હોવુ જ જોઇએ\n"
 
-#: ../src/virt-viewer-app.c:2329
+#: ../src/virt-viewer-app.c:2332
 #, c-format
 msgid "Display %d"
 msgstr "%d દર્શાવો"
 
-#: ../src/virt-viewer-app.c:2502
+#: ../src/virt-viewer-app.c:2505
 #, c-format
 msgid "Invalid kiosk-quit argument: %s"
 msgstr "અયોગ્ય kiosk-quit દલીલ: %s"
 
-#: ../src/virt-viewer-app.c:2512
+#: ../src/virt-viewer-app.c:2515
 msgid "Zoom level of window, in percentage"
 msgstr "નાનામોટાપણાનું સ્તર, ટકામાં"
 
-#: ../src/virt-viewer-app.c:2514
+#: ../src/virt-viewer-app.c:2517
 msgid "Open in full screen mode (adjusts guest resolution to fit the client)"
 msgstr "સંપૂર્ણ સ્ક્રીન સ્થિતિમાં ખોલો (ક્લાયન્ટને બંધબેસાડવા માટે મહેમાન રિઝોલ્યુશનને ગોઠવે છે)"
 
-#: ../src/virt-viewer-app.c:2516
+#: ../src/virt-viewer-app.c:2519
 msgid "Customise hotkeys"
 msgstr "ટૂંકીકીઓ કસ્ટમાઇઝ કરો"
 
-#: ../src/virt-viewer-app.c:2518
+#: ../src/virt-viewer-app.c:2521
 msgid "Enable kiosk mode"
 msgstr "kiosk સ્થિતિને સક્રિય કરો"
 
-#: ../src/virt-viewer-app.c:2520
+#: ../src/virt-viewer-app.c:2523
 msgid "Quit on given condition in kiosk mode"
 msgstr "kiosk સ્થિતિમાં આપેલ શરત પર બહાર નીકળો"
 
-#: ../src/virt-viewer-app.c:2520
+#: ../src/virt-viewer-app.c:2523
 msgid "<never|on-disconnect>"
 msgstr "<never|on-disconnect>"
 
-#: ../src/virt-viewer-app.c:2522
+#: ../src/virt-viewer-app.c:2525
 msgid "Display verbose information"
 msgstr "વર્બોસ જાણકારીને બતાવો"
 
-#: ../src/virt-viewer-app.c:2524
+#: ../src/virt-viewer-app.c:2527
 msgid "Display debugging information"
 msgstr "ડિબગીંગ જાણકારીને બતાવો"
+
+#: ../src/virt-viewer-app.c:2532
+#, fuzzy
+msgid "Remote-viewer Options:"
+msgstr "remote-viewer આવૃત્તિ %s\n"
+
+#: ../src/virt-viewer-app.c:2532
+#, fuzzy
+msgid "Show Remote-viewer Options"
+msgstr "remote-viewer આવૃત્તિ %s\n"
 
 #: ../src/virt-viewer-auth.c:88
 #, c-format
@@ -426,7 +432,7 @@ msgstr "સત્તાધિકરણ જરૂરી છે"
 msgid "label"
 msgstr "લેબલ"
 
-#: ../src/virt-viewer-auth.xml.h:3
+#: ../src/virt-viewer-auth.xml.h:3 ../src/virt-viewer-window.c:1961
 msgid "Password:"
 msgstr "પાસવર્ડ:"
 
@@ -442,6 +448,10 @@ msgstr ""
 #, c-format
 msgid "%s version %s\n"
 msgstr "%s આવૃત્તિ %s\n"
+
+#: ../src/virt-viewer-main.c:60
+msgid "Display version information"
+msgstr "આવૃત્તિ જાણકારીને બતાવો"
 
 #: ../src/virt-viewer-main.c:62
 msgid "Direct connection with no automatic tunnels"
@@ -491,12 +501,12 @@ msgstr ""
 "%s\n"
 "\n"
 
-#: ../src/virt-viewer-session-spice.c:537
+#: ../src/virt-viewer-session-spice.c:540
 msgid "Invalid password"
 msgstr ""
 
 #. Create the widgets
-#: ../src/virt-viewer-session-spice.c:667
+#: ../src/virt-viewer-session-spice.c:684 ../src/virt-viewer-window.c:1856
 msgid "Select USB devices for redirection"
 msgstr "પુનર્નિર્દેશન માટે USB ઉપકરણોને પસંદ કરો"
 
@@ -509,92 +519,199 @@ msgstr "બિનઆધારભૂત સત્તાધિકરણ પ્ર�
 msgid "No virtual machine found"
 msgstr ""
 
-#: ../src/virt-viewer-window.c:589
+#: ../src/virt-viewer-window.c:778
 msgid "Ctrl+Alt+_Del"
 msgstr "Ctrl+Alt+_Del"
 
-#: ../src/virt-viewer-window.c:590
+#: ../src/virt-viewer-window.c:779
 msgid "Ctrl+Alt+_Backspace"
 msgstr "Ctrl+Alt+_Backspace"
 
-#: ../src/virt-viewer-window.c:592
+#: ../src/virt-viewer-window.c:781
 msgid "Ctrl+Alt+F_1"
 msgstr "Ctrl+Alt+F_1"
 
-#: ../src/virt-viewer-window.c:593
+#: ../src/virt-viewer-window.c:782
 msgid "Ctrl+Alt+F_2"
 msgstr "Ctrl+Alt+F_2"
 
-#: ../src/virt-viewer-window.c:594
+#: ../src/virt-viewer-window.c:783
 msgid "Ctrl+Alt+F_3"
 msgstr "Ctrl+Alt+F_3"
 
-#: ../src/virt-viewer-window.c:595
+#: ../src/virt-viewer-window.c:784
 msgid "Ctrl+Alt+F_4"
 msgstr "Ctrl+Alt+F_4"
 
-#: ../src/virt-viewer-window.c:596
+#: ../src/virt-viewer-window.c:785
 msgid "Ctrl+Alt+F_5"
 msgstr "Ctrl+Alt+F_5"
 
-#: ../src/virt-viewer-window.c:597
+#: ../src/virt-viewer-window.c:786
 msgid "Ctrl+Alt+F_6"
 msgstr "Ctrl+Alt+F_6"
 
-#: ../src/virt-viewer-window.c:598
+#: ../src/virt-viewer-window.c:787
 msgid "Ctrl+Alt+F_7"
 msgstr "Ctrl+Alt+F_7"
 
-#: ../src/virt-viewer-window.c:599
+#: ../src/virt-viewer-window.c:788
 msgid "Ctrl+Alt+F_8"
 msgstr "Ctrl+Alt+F_8"
 
-#: ../src/virt-viewer-window.c:600
+#: ../src/virt-viewer-window.c:789
 msgid "Ctrl+Alt+F_9"
 msgstr "Ctrl+Alt+F_9"
 
-#: ../src/virt-viewer-window.c:601
+#: ../src/virt-viewer-window.c:790
 msgid "Ctrl+Alt+F1_0"
 msgstr "Ctrl+Alt+F1_0"
 
-#: ../src/virt-viewer-window.c:602
+#: ../src/virt-viewer-window.c:791
 msgid "Ctrl+Alt+F11"
 msgstr "Ctrl+Alt+F11"
 
-#: ../src/virt-viewer-window.c:603
+#: ../src/virt-viewer-window.c:792
 msgid "Ctrl+Alt+F12"
 msgstr "Ctrl+Alt+F12"
 
-#: ../src/virt-viewer-window.c:985 ../src/virt-viewer.xml.h:2
+#: ../src/virt-viewer-window.c:1174 ../src/virt-viewer.xml.h:2
 msgid "Screenshot"
 msgstr "સ્ક્રીનશોટ"
 
-#: ../src/virt-viewer-window.c:1047 ../src/virt-viewer-window.c:1049
+#: ../src/virt-viewer-window.c:1236 ../src/virt-viewer-window.c:1238
 msgid "Unknown"
 msgstr ""
 
-#: ../src/virt-viewer-window.c:1107
-msgid "Disconnect"
-msgstr "જોડાણ તોડી નાંખો"
+#: ../src/virt-viewer-window.c:1453 ../src/virt-viewer-window.c:2333
+msgid "Forced Poweroff"
+msgstr ""
 
-#: ../src/virt-viewer-window.c:1116 ../src/virt-viewer-window.c:1117
-#: ../src/virt-viewer.xml.h:3
-msgid "USB device selection"
-msgstr "USB ઉપકરણ પસંદગી"
+#: ../src/virt-viewer-window.c:1456 ../src/virt-viewer-window.c:1515
+#: ../src/virt-viewer-window.c:1710 ../src/virt-viewer-window.c:1950
+#: ../src/virt-viewer-window.c:2145
+msgid "_OK"
+msgstr ""
 
-#: ../src/virt-viewer-window.c:1126
-msgid "Send key combination"
-msgstr "કી સંયોજન મોકલો"
+#: ../src/virt-viewer-window.c:1457 ../src/virt-viewer-window.c:1516
+#: ../src/virt-viewer-window.c:1951 ../src/virt-viewer-window.c:2146
+msgid "_Cancel"
+msgstr ""
 
-#: ../src/virt-viewer-window.c:1135 ../src/virt-viewer-window.c:1136
-msgid "Leave fullscreen"
+#: ../src/virt-viewer-window.c:1464
+msgid "Will be forced to close the desktop, Confirm or not?"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:1512
+msgid "Close Window"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:1512 ../src/virt-viewer-window.c:2238
+msgid "Close Client"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:1523
+#, fuzzy
+msgid "Do you want to close the window?"
+msgstr "શું તમે આ સત્રને બંધ કરવા માંગો છો?"
+
+#: ../src/virt-viewer-window.c:1524
+#, fuzzy
+msgid "Do you want to close the client?"
+msgstr "શું તમે આ સત્રને બંધ કરવા માંગો છો?"
+
+#: ../src/virt-viewer-window.c:1707
+#, fuzzy
+msgid "Configure USB device to enable redirection in boot"
+msgstr "પુનર્નિર્દેશન માટે USB ઉપકરણોને પસંદ કરો"
+
+#: ../src/virt-viewer-window.c:1719
+msgid ""
+"Once checking, the device will connect to desktop automatically in next "
+"desktop boot."
+msgstr ""
+
+#: ../src/virt-viewer-window.c:1841
+#, fuzzy
+msgid "USB redirection error"
+msgstr "USB પુનર્નિર્દેશન ભૂલ: %s"
+
+#: ../src/virt-viewer-window.c:1859
+msgid "_Close"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:1931
+msgid "incorrect password!"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:1947
+msgid "Verification"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2027
+msgid "enable toolbar"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2029
+msgid "is mode VM"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2031
+#, fuzzy
+msgid "Force in a fullscreen mode"
 msgstr "પૂર્ણસ્ક્રીન છોડો"
 
-#: ../src/virt-viewer-window.c:1218
-msgid "Ctrl+Alt"
-msgstr "Ctrl+Alt"
+#: ../src/virt-viewer-window.c:2033
+msgid "require password when exit"
+msgstr ""
 
-#: ../src/virt-viewer-window.c:1221
+#: ../src/virt-viewer-window.c:2035
+#, fuzzy
+msgid "Set the window title"
+msgstr "વિન્ડો શીર્ષક સુયોજિત કરો"
+
+#: ../src/virt-viewer-window.c:2142 ../src/virt-viewer-window.c:2280
+msgid "Switch Mouse Mode"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2153
+msgid ""
+"Mouse switches between server mode and client side mode, please do this when "
+"mouse is abnormal, you can switch with shortcut key (Shift+F11)."
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2245
+#, fuzzy
+msgid "Exit Fullscreen"
+msgstr "પૂર્ણ સ્ક્રીન"
+
+#: ../src/virt-viewer-window.c:2268
+msgid "Exit Desktop"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2291
+#, fuzzy
+msgid "Send Ctrl+Alt+Delete"
+msgstr "Ctrl+Alt+_Del"
+
+#: ../src/virt-viewer-window.c:2307
+#, fuzzy
+msgid "Select usb redirection"
+msgstr "પુનર્નિર્દેશન માટે USB ઉપકરણોને પસંદ કરો"
+
+#: ../src/virt-viewer-window.c:2308
+msgid "Configure automatic redirection"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2321
+msgid "USB"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2434
+msgid "Shift_L+F11"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2437
 #, c-format
 msgid "(Press %s to release pointer)"
 msgstr "(પોઇંટરને પ્રકાશિત કરવા માટે  %s ને દબાવો)"
@@ -603,13 +720,13 @@ msgstr "(પોઇંટરને પ્રકાશિત કરવા મા�
 #. * This is "<ungrab (or empty)><space (or empty)><subtitle (or empty)> - <appname>"
 #. * Such as: "(Press Ctrl+Alt to release pointer) BigCorpTycoon MOTD - Virt Viewer"
 #.
-#: ../src/virt-viewer-window.c:1232
+#: ../src/virt-viewer-window.c:2448
 #, c-format
 msgid "%s%s%s - %s"
 msgstr "%s%s%s - %s"
 
 #. translators: <space>
-#: ../src/virt-viewer-window.c:1236
+#: ../src/virt-viewer-window.c:2452
 msgid " "
 msgstr " "
 
@@ -686,6 +803,10 @@ msgstr ""
 msgid "_File"
 msgstr "ફાઇલ (_F)"
 
+#: ../src/virt-viewer.xml.h:3
+msgid "USB device selection"
+msgstr "USB ઉપકરણ પસંદગી"
+
 #: ../src/virt-viewer.xml.h:4
 msgid "Smartcard insertion"
 msgstr "સ્માર્ટકાર્ડ નિવેશ"
@@ -749,3 +870,15 @@ msgstr ""
 #: ../src/virt-viewer-vm-connection.xml.h:3
 msgid "Available virtual machines"
 msgstr ""
+
+#~ msgid "Remote viewer client"
+#~ msgstr "- દૂરસ્થ દર્શક ક્લાયન્ટ"
+
+#~ msgid "Disconnect"
+#~ msgstr "જોડાણ તોડી નાંખો"
+
+#~ msgid "Send key combination"
+#~ msgstr "કી સંયોજન મોકલો"
+
+#~ msgid "Ctrl+Alt"
+#~ msgstr "Ctrl+Alt"

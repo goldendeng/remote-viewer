@@ -3,7 +3,7 @@
 
 /* Build version details */
 #define BUILDID "0"
-#define USE_USBREDIR 1
+
 /* always defined to indicate that i18n is enabled */
 #define ENABLE_NLS 1
 

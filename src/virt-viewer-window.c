@@ -140,6 +140,7 @@ static char *port = 0;
 static int usb_indexs[4] = {0};
 /*global*/
 static GKeyFile      *keyfile = NULL;
+static gchar *conf_file;
 
 static void
 virt_viewer_window_get_property (GObject *object, guint property_id,
@@ -227,6 +228,9 @@ virt_viewer_window_dispose (GObject *object)
     g_value_unset(&priv->accel_setting);
     g_clear_object(&priv->toolbar);
 
+	//g_free(keyfile);
+	//g_free(conf_file);
+	//g_free(title);
     G_OBJECT_CLASS (virt_viewer_window_parent_class)->dispose (object);
 }
 
@@ -455,7 +459,7 @@ virt_viewer_window_init (VirtViewerWindow *self)
 
 GError *error = NULL;
 
-gchar *conf_file;
+
 #if defined(G_OS_WIN32)
     gchar *locale_path;
     gchar *log_path;
@@ -488,13 +492,14 @@ gchar *conf_file;
         return 1;
     }
     conf_file = g_build_filename((const gchar *)szBuff, "conf", NULL);
-    if(!getenv("EVDI_LOG_CONSOLE"))
-        g_log_set_handler(G_LOG_DOMAIN, G_LOG_LEVEL_MASK, log_handler, szBuff);
+    //if(!getenv("EVDI_LOG_CONSOLE"))
+        //g_log_set_handler(G_LOG_DOMAIN, G_LOG_LEVEL_MASK, log_handler, szBuff);
 #else
     conf_file = g_build_filename("/etc/evdi", "config", NULL);
-    if(!getenv("EVDI_LOG_CONSOLE"))
-        g_log_set_handler(G_LOG_DOMAIN, G_LOG_LEVEL_MASK, log_handler, NULL);
+   // if(!getenv("EVDI_LOG_CONSOLE"))
+       // g_log_set_handler(G_LOG_DOMAIN, G_LOG_LEVEL_MASK, log_handler, NULL);
 #endif
+
 
     if (g_mkdir_with_parents(conf_file, mode) == -1)
         g_warning("failed to create config directory");
@@ -508,6 +513,12 @@ gchar *conf_file;
     conf_file = g_build_filename("/etc/evdi", "config", "gtk_settings", NULL);
 #endif
 
+	if(!g_file_test(conf_file, G_FILE_TEST_IS_DIR))
+		{
+                g_mkdir_with_parents(conf_file, 0755);
+				g_warning("create conf_file");
+		}
+					 	
     if (!g_key_file_load_from_file(keyfile, conf_file,
                                    G_KEY_FILE_KEEP_COMMENTS|G_KEY_FILE_KEEP_TRANSLATIONS, &error)) {
         g_warning("Couldn't load configuration: %s", error->message);
@@ -515,14 +526,14 @@ gchar *conf_file;
 		error = NULL;
     }
 
-g_free(conf_file);
+//g_free(conf_file);
 			
 #if defined(G_OS_WIN32)
 				g_free(locale_path);
 				g_free(log_path);
 #endif
 
-restore_configuration(self);
+//restore_configuration(self);
 
 }
 
@@ -1624,6 +1635,7 @@ typedef struct CheckDevice{
 static void auto_clicked_cb(GtkWidget *check, gpointer user_data){
     CheckDevice *check_device;
     gchar *desc;
+	GError *err = NULL;
     char title_vid[10], title_pid[10], title_desc[10];
     char value_vid[10], value_pid[10], value_desc[256];
     check_device = g_object_get_data(G_OBJECT(check), "auto-usb-device");
@@ -1654,6 +1666,16 @@ static void auto_clicked_cb(GtkWidget *check, gpointer user_data){
         g_key_file_set_string(keyfile, "usb", title_pid, "");
         g_key_file_set_string(keyfile, "usb", title_desc, "");
     }
+		//===write
+				gchar *conf;
+				if ((conf = g_key_file_to_data(keyfile, NULL, &err)) == NULL ||
+								!g_file_set_contents(conf_file, conf, -1, &err)) {
+								g_warning("Couldn't save configuration: %s", err->message);
+								g_error_free(err);
+								err = NULL;
+						}
+				g_message("conf = %s",conf);
+				g_free(conf);
 
     return;
 }
@@ -1763,13 +1785,14 @@ static void select_auto_usb_devices(VirtViewerWindow *win)
         }
         
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check), is_auto_connect);
-        g_warning("is auto reconnct %d index %d rules count  %d", is_auto_connect, check_device->index, rules_count);
+        g_message("is auto reconnct %d index %d rules count  %d", is_auto_connect, check_device->index, rules_count);
         g_object_set_data(
             G_OBJECT(check), "auto-usb-device", check_device);
 
         g_signal_connect(G_OBJECT(check), "clicked",
                      G_CALLBACK(auto_clicked_cb), check);
-        
+        restore_configuration(win);
+					
         gtk_widget_show_all(check);
         
     }
@@ -2127,7 +2150,7 @@ static void menu_cb_mouse_mode(GtkAction *action, void *data)
     gtk_box_set_spacing(GTK_BOX(gtk_bin_get_child(GTK_BIN(dialog))), 20);
     gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_CANCEL);
     
-    label = gtk_label_new(_("Mouse switches between server mode and client side mode, please do this when mouse is abnormal, you can switch with shortcut key (Shift+F12)."));  
+    label = gtk_label_new(_("Mouse switches between server mode and client side mode, please do this when mouse is abnormal, you can switch with shortcut key (Shift+F11)."));  
     gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
     area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
@@ -2209,14 +2232,14 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
 			
 	 if(complete_fullscreen){
         // TODO change icon
-        button = gtk_image_new_from_icon_name("close-vdi",
+        button = gtk_image_new_from_icon_name("rclose-vdi",
                                               GTK_ICON_SIZE_INVALID);
         button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
         gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Close Client"));
     
     }
     else{
-       button = gtk_image_new_from_icon_name("window-vdi",
+       button = gtk_image_new_from_icon_name("rwindow-vdi",
                                               GTK_ICON_SIZE_INVALID);
        button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
        gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Exit Fullscreen"));
@@ -2238,7 +2261,7 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
 	
 	if(!is_mode_vm){
 					/* Close connection */
-					exitVDI = gtk_image_new_from_icon_name("exit-vdi-1",
+					exitVDI = gtk_image_new_from_icon_name("rexit-vdi-1",
 																								GTK_ICON_SIZE_INVALID);
 					
 					exitVDI = GTK_WIDGET(gtk_tool_button_new(exitVDI, NULL));
@@ -2250,7 +2273,7 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
 					gtk_widget_show_all (GTK_WIDGET (exitVDI));
 			}
 			
-			button = gtk_image_new_from_icon_name("mouse-mode-1",
+			button = gtk_image_new_from_icon_name("rmouse-mode-1",
 																						GTK_ICON_SIZE_INVALID);
 			button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
 	
@@ -2261,7 +2284,7 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
 			gtk_widget_show_all (GTK_WIDGET (button));
 	
 			/* Send key */
-			button = gtk_image_new_from_icon_name("send-alt-1",
+			button = gtk_image_new_from_icon_name("rsend-alt-1",
 																						GTK_ICON_SIZE_INVALID);
 			button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
 			
@@ -2291,7 +2314,7 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
 			
 			g_signal_connect(usb_auto_item, "activate", G_CALLBACK(menu_cb_select_auto_usb_devices), self);
 	
-			button = gtk_image_new_from_icon_name("usb-redir-1",
+			button = gtk_image_new_from_icon_name("rusb-redir-1",
 																						GTK_ICON_SIZE_INVALID);
 			button = GTK_WIDGET(gtk_menu_tool_button_new(button, NULL));
 	
@@ -2304,7 +2327,7 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
 			gtk_widget_show_all(button);
 #endif
 			/* Poweroff function */
-			button = gtk_image_new_from_icon_name("power-off-vdi-1",
+			button = gtk_image_new_from_icon_name("rpower-off-vdi-1",
 																						GTK_ICON_SIZE_INVALID);
 			button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
 			gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(button), _("Forced Poweroff"));
@@ -2322,7 +2345,7 @@ virt_viewer_window_toolbar_setup(VirtViewerWindow *self)
 			gtk_widget_show_all (GTK_WIDGET (button));
 	
 			/* main text */
-			button = gtk_image_new_from_icon_name("PC-vdi-1",
+			button = gtk_image_new_from_icon_name("rPC-vdi-1",
 																						GTK_ICON_SIZE_INVALID);
 			button = GTK_WIDGET(gtk_tool_button_new(button, NULL));
 			gtk_tool_button_set_label(GTK_TOOL_BUTTON(button), title);
@@ -2408,7 +2431,7 @@ virt_viewer_window_update_title(VirtViewerWindow *self)
             g_debug("release-cursor accel key: key=%u, mods=%x, flags=%u", key.accel_key, key.accel_mods, key.accel_flags);
             label = gtk_accelerator_get_label(key.accel_key, key.accel_mods);
         } else {
-            label = g_strdup(_("Ctrl+Alt"));
+            label = g_strdup(_("Shift_L+F11"));
         }
 
         ungrab = g_strdup_printf(_("(Press %s to release pointer)"), label);

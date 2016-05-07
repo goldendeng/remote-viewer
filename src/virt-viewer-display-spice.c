@@ -231,7 +231,9 @@ enable_accel_changed(VirtViewerApp *app,
         spice_display_set_grab_keys(self->priv->display, seq);
         spice_grab_sequence_free(seq);
     } else {
-        spice_display_set_grab_keys(self->priv->display, NULL);
+    	SpiceGrabSequence *seq;
+    	seq = spice_grab_sequence_new_from_string("Shift_L+F11");
+        spice_display_set_grab_keys(self->priv->display, seq);
     }
 }
 

@@ -1862,8 +1862,8 @@ virt_viewer_app_constructor (GType gtype,
 
     virt_viewer_set_insert_smartcard_accel(self, GDK_F8, GDK_SHIFT_MASK);
     virt_viewer_set_remove_smartcard_accel(self, GDK_F9, GDK_SHIFT_MASK);
-    gtk_accel_map_add_entry("<virt-viewer>/view/toggle-fullscreen", GDK_F11, 0);
-    gtk_accel_map_add_entry("<virt-viewer>/view/release-cursor", GDK_F12, GDK_SHIFT_MASK);
+    gtk_accel_map_add_entry("<virt-viewer>/view/toggle-fullscreen", GDK_F12, GDK_SHIFT_MASK);
+    gtk_accel_map_add_entry("<virt-viewer>/view/release-cursor", GDK_F11, GDK_SHIFT_MASK);
     gtk_accel_map_add_entry("<virt-viewer>/view/zoom-reset", GDK_0, GDK_CONTROL_MASK);
     gtk_accel_map_add_entry("<virt-viewer>/view/zoom-out", GDK_minus, GDK_CONTROL_MASK);
     gtk_accel_map_add_entry("<virt-viewer>/view/zoom-in", GDK_plus, GDK_CONTROL_MASK);

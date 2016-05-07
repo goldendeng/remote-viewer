@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: virt-viewer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-25 16:22+0800\n"
+"POT-Creation-Date: 2016-05-07 16:13+0800\n"
 "PO-Revision-Date: 2015-01-12 11:21+0000\n"
 "Last-Translator: Daniel Berrange <dan-transifex@berrange.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/virt-"
@@ -23,8 +23,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#. GOptionGroup *app_options_new = NULL;
-#: ../data/remote-viewer.desktop.in.h:1 ../src/remote-viewer-main.c:159
+#: ../data/remote-viewer.desktop.in.h:1 ../src/remote-viewer-main.c:161
 msgid "Remote Viewer"
 msgstr "远程查看程序"
 
@@ -85,39 +84,36 @@ msgstr "remote-viewer 版本 %s\n"
 msgid "Network failure, please check the network"
 msgstr "网络故障，请检查网络"
 
-#: ../src/remote-viewer-main.c:137 ../src/virt-viewer-main.c:60
-msgid "Display version information"
+#: ../src/remote-viewer-main.c:138
+
+msgid "Display version and quit"
 msgstr "显示版本信息"
 
-#: ../src/remote-viewer-main.c:139
+#: ../src/remote-viewer-main.c:140
 msgid "Set window title"
 msgstr "设置窗口标题"
 
-#: ../src/remote-viewer-main.c:141
+#: ../src/remote-viewer-main.c:142
 msgid "Spice server address"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:143
+#: ../src/remote-viewer-main.c:144
 msgid "Spice server port"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:145
+#: ../src/remote-viewer-main.c:146
 msgid "Spice server secure port"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:147
+#: ../src/remote-viewer-main.c:148
 msgid "Server password"
 msgstr ""
 
-#: ../src/remote-viewer-main.c:150
+#: ../src/remote-viewer-main.c:152
 msgid "Open connection using Spice controller communication"
 msgstr "使用 Spice 控制器沟通打开连接"
 
-#: ../src/remote-viewer-main.c:163
-msgid "Remote viewer client"
-msgstr ""
-
-#: ../src/remote-viewer-main.c:183
+#: ../src/remote-viewer-main.c:186
 #, c-format
 msgid ""
 "%s\n"
@@ -126,12 +122,12 @@ msgstr ""
 "%s\n"
 "运行 '%s --help' 来查看可用命令行选项的完整列表\n"
 
-#: ../src/remote-viewer-main.c:195
+#: ../src/remote-viewer-main.c:198
 #, c-format
 msgid "Error: extra arguments given while using Spice controller\n"
 msgstr "错误：使用 Spice 控制器时给出额外参数\n"
 
-#: ../src/remote-viewer-main.c:202
+#: ../src/remote-viewer-main.c:205
 #, c-format
 msgid "Error: can't handle multiple URIs\n"
 msgstr "错误：无法控制多个 URI\n"
@@ -278,58 +274,58 @@ msgstr ""
 msgid "The Fedora Translation Team"
 msgstr "Fedora 翻译团队"
 
-#: ../src/virt-viewer-app.c:490
+#: ../src/virt-viewer-app.c:493
 msgid "Do you want to close the session?"
 msgstr "您要关闭这个会话吗？"
 
-#: ../src/virt-viewer-app.c:492
+#: ../src/virt-viewer-app.c:495
 msgid "Do not ask me again"
 msgstr "不要再问我"
 
-#: ../src/virt-viewer-app.c:954
+#: ../src/virt-viewer-app.c:957
 #, c-format
 msgid "Waiting for display %d..."
 msgstr "等待画面 %d......"
 
-#: ../src/virt-viewer-app.c:1063
+#: ../src/virt-viewer-app.c:1066
 #, c-format
 msgid "Unknown graphic type for the guest %s"
 msgstr "虚拟机 %s 的未知图形类型"
 
-#: ../src/virt-viewer-app.c:1144
+#: ../src/virt-viewer-app.c:1147
 msgid "Connect to ssh failed."
 msgstr "连接到 ssh 失败"
 
-#: ../src/virt-viewer-app.c:1146
+#: ../src/virt-viewer-app.c:1149
 msgid "Can't connect to channel, SSH only supported."
 msgstr "无法连接到通道，只支持 SSH。"
 
-#: ../src/virt-viewer-app.c:1158
+#: ../src/virt-viewer-app.c:1161
 msgid "Connect to channel unsupported."
 msgstr "无法连接到不支持的通道。"
 
-#: ../src/virt-viewer-app.c:1220
+#: ../src/virt-viewer-app.c:1223
 msgid "Display can only be attached through libvirt with --attach"
 msgstr ""
 
-#: ../src/virt-viewer-app.c:1243
+#: ../src/virt-viewer-app.c:1246
 msgid "Connecting to graphic server"
 msgstr "正在连接到图形服务器"
 
-#: ../src/virt-viewer-app.c:1342
+#: ../src/virt-viewer-app.c:1345
 msgid "Guest domain has shutdown"
 msgstr "已关闭虚拟机域"
 
-#: ../src/virt-viewer-app.c:1403
+#: ../src/virt-viewer-app.c:1406
 msgid "Connected to graphic server"
 msgstr "已连接到图形服务器"
 
-#: ../src/virt-viewer-app.c:1430
+#: ../src/virt-viewer-app.c:1433
 #, c-format
 msgid "Unable to connect to the graphic server %s"
 msgstr "无法连接到图形服务器 %s"
 
-#: ../src/virt-viewer-app.c:1462
+#: ../src/virt-viewer-app.c:1465
 #, c-format
 msgid ""
 "Unable to authenticate with remote desktop server at %s: %s\n"
@@ -338,67 +334,77 @@ msgstr ""
 "无法使用 %s 中的远程桌面服务器验证：%s\n"
 "重新尝试连接？"
 
-#: ../src/virt-viewer-app.c:1482
+#: ../src/virt-viewer-app.c:1485
 #, c-format
 msgid "Unable to authenticate with remote desktop server: %s"
 msgstr "无法使用远程桌面服务器验证：%s"
 
-#: ../src/virt-viewer-app.c:1490
+#: ../src/virt-viewer-app.c:1493
 #, c-format
 msgid "USB redirection error: %s"
 msgstr "USB 重新定向错误：%s"
 
-#: ../src/virt-viewer-app.c:1783
+#: ../src/virt-viewer-app.c:1786
 #, c-format
 msgid "Zoom level must be within %d-%d\n"
 msgstr ""
 
-#: ../src/virt-viewer-app.c:2329
+#: ../src/virt-viewer-app.c:2332
 #, c-format
 msgid "Display %d"
 msgstr "显示 %d"
 
-#: ../src/virt-viewer-app.c:2502
+#: ../src/virt-viewer-app.c:2505
 #, c-format
 msgid "Invalid kiosk-quit argument: %s"
 msgstr "无效的 kiosk-quit 参数：%s"
 
-#: ../src/virt-viewer-app.c:2512
+#: ../src/virt-viewer-app.c:2515
 msgid "Zoom level of window, in percentage"
 msgstr "窗口缩放级别，以百分比计"
 
-#: ../src/virt-viewer-app.c:2514
+#: ../src/virt-viewer-app.c:2517
 msgid "Open in full screen mode (adjusts guest resolution to fit the client)"
 msgstr ""
 
-#: ../src/virt-viewer-app.c:2516
+#: ../src/virt-viewer-app.c:2519
 msgid "Customise hotkeys"
 msgstr "自定义快捷键"
 
-#: ../src/virt-viewer-app.c:2518
+#: ../src/virt-viewer-app.c:2521
 msgid "Enable kiosk mode"
 msgstr "启用 kiosk 模式"
 
-#: ../src/virt-viewer-app.c:2520
+#: ../src/virt-viewer-app.c:2523
 msgid "Quit on given condition in kiosk mode"
 msgstr ""
 
-#: ../src/virt-viewer-app.c:2520
+#: ../src/virt-viewer-app.c:2523
 msgid "<never|on-disconnect>"
 msgstr "<never|on-disconnect>"
 
-#: ../src/virt-viewer-app.c:2522
+#: ../src/virt-viewer-app.c:2525
 msgid "Display verbose information"
 msgstr "显示详细信息"
 
-#: ../src/virt-viewer-app.c:2524
+#: ../src/virt-viewer-app.c:2527
 msgid "Display debugging information"
 msgstr "显示调试信息"
+
+#: ../src/virt-viewer-app.c:2532
+
+msgid "Remote-viewer Options:"
+msgstr "remote-viewer 版本 %s"
+
+#: ../src/virt-viewer-app.c:2532
+
+msgid "Show Remote-viewer Options"
+msgstr "remote-viewer 版本 %s"
 
 #: ../src/virt-viewer-auth.c:88
 #, c-format
 msgid ""
-"Authentication is required for the %s connection to:\n"
+"Authentication is required for the %s connection to:"
 "\n"
 "<b>%s</b>\n"
 "\n"
@@ -424,7 +430,7 @@ msgstr "所需验证"
 msgid "label"
 msgstr "标签"
 
-#: ../src/virt-viewer-auth.xml.h:3
+#: ../src/virt-viewer-auth.xml.h:3 ../src/virt-viewer-window.c:1961
 msgid "Password:"
 msgstr "密码："
 
@@ -440,6 +446,10 @@ msgstr ""
 #, c-format
 msgid "%s version %s\n"
 msgstr "%s 版本 %s\n"
+
+#: ../src/virt-viewer-main.c:60
+msgid "Display version information"
+msgstr "显示版本信息"
 
 #: ../src/virt-viewer-main.c:62
 msgid "Direct connection with no automatic tunnels"
@@ -489,12 +499,12 @@ msgstr ""
 "%s\n"
 "\n"
 
-#: ../src/virt-viewer-session-spice.c:537
+#: ../src/virt-viewer-session-spice.c:540
 msgid "Invalid password"
 msgstr ""
 
 #. Create the widgets
-#: ../src/virt-viewer-session-spice.c:667
+#: ../src/virt-viewer-session-spice.c:684 ../src/virt-viewer-window.c:1856
 msgid "Select USB devices for redirection"
 msgstr "为重新定向选择 USB 设备"
 
@@ -507,92 +517,201 @@ msgstr "不支持的验证类型 %d"
 msgid "No virtual machine found"
 msgstr ""
 
-#: ../src/virt-viewer-window.c:589
+#: ../src/virt-viewer-window.c:778
 msgid "Ctrl+Alt+_Del"
 msgstr "Ctrl+Alt+_Del"
 
-#: ../src/virt-viewer-window.c:590
+#: ../src/virt-viewer-window.c:779
 msgid "Ctrl+Alt+_Backspace"
 msgstr "Ctrl+Alt+_Backspace"
 
-#: ../src/virt-viewer-window.c:592
+#: ../src/virt-viewer-window.c:781
 msgid "Ctrl+Alt+F_1"
 msgstr "Ctrl+Alt+F_1"
 
-#: ../src/virt-viewer-window.c:593
+#: ../src/virt-viewer-window.c:782
 msgid "Ctrl+Alt+F_2"
 msgstr "Ctrl+Alt+F_2"
 
-#: ../src/virt-viewer-window.c:594
+#: ../src/virt-viewer-window.c:783
 msgid "Ctrl+Alt+F_3"
 msgstr "Ctrl+Alt+F_3"
 
-#: ../src/virt-viewer-window.c:595
+#: ../src/virt-viewer-window.c:784
 msgid "Ctrl+Alt+F_4"
 msgstr "Ctrl+Alt+F_4"
 
-#: ../src/virt-viewer-window.c:596
+#: ../src/virt-viewer-window.c:785
 msgid "Ctrl+Alt+F_5"
 msgstr "Ctrl+Alt+F_5"
 
-#: ../src/virt-viewer-window.c:597
+#: ../src/virt-viewer-window.c:786
 msgid "Ctrl+Alt+F_6"
 msgstr "Ctrl+Alt+F_6"
 
-#: ../src/virt-viewer-window.c:598
+#: ../src/virt-viewer-window.c:787
 msgid "Ctrl+Alt+F_7"
 msgstr "Ctrl+Alt+F_7"
 
-#: ../src/virt-viewer-window.c:599
+#: ../src/virt-viewer-window.c:788
 msgid "Ctrl+Alt+F_8"
 msgstr "Ctrl+Alt+F_8"
 
-#: ../src/virt-viewer-window.c:600
+#: ../src/virt-viewer-window.c:789
 msgid "Ctrl+Alt+F_9"
 msgstr "Ctrl+Alt+F_9"
 
-#: ../src/virt-viewer-window.c:601
+#: ../src/virt-viewer-window.c:790
 msgid "Ctrl+Alt+F1_0"
 msgstr "Ctrl+Alt+F1_0"
 
-#: ../src/virt-viewer-window.c:602
+#: ../src/virt-viewer-window.c:791
 msgid "Ctrl+Alt+F11"
 msgstr "Ctrl+Alt+F11"
 
-#: ../src/virt-viewer-window.c:603
+#: ../src/virt-viewer-window.c:792
 msgid "Ctrl+Alt+F12"
 msgstr "Ctrl+Alt+F12"
 
-#: ../src/virt-viewer-window.c:985 ../src/virt-viewer.xml.h:2
+#: ../src/virt-viewer-window.c:1174 ../src/virt-viewer.xml.h:2
 msgid "Screenshot"
 msgstr "截屏"
 
-#: ../src/virt-viewer-window.c:1047 ../src/virt-viewer-window.c:1049
+#: ../src/virt-viewer-window.c:1236 ../src/virt-viewer-window.c:1238
 msgid "Unknown"
 msgstr ""
 
-#: ../src/virt-viewer-window.c:1107
-msgid "Disconnect"
-msgstr "断开连接"
+#: ../src/virt-viewer-window.c:1453 ../src/virt-viewer-window.c:2333
+msgid "Forced Poweroff"
+msgstr "强制断电"
 
-#: ../src/virt-viewer-window.c:1116 ../src/virt-viewer-window.c:1117
-#: ../src/virt-viewer.xml.h:3
-msgid "USB device selection"
-msgstr "USB 设备选择"
+#: ../src/virt-viewer-window.c:1456 ../src/virt-viewer-window.c:1515
+#: ../src/virt-viewer-window.c:1710 ../src/virt-viewer-window.c:1950
+#: ../src/virt-viewer-window.c:2145
+msgid "_OK"
+msgstr "确定"
 
-#: ../src/virt-viewer-window.c:1126
-msgid "Send key combination"
-msgstr "发送按键组合"
+#: ../src/virt-viewer-window.c:1457 ../src/virt-viewer-window.c:1516
+#: ../src/virt-viewer-window.c:1951 ../src/virt-viewer-window.c:2146
+msgid "_Cancel"
+msgstr "取消"
 
-#: ../src/virt-viewer-window.c:1135 ../src/virt-viewer-window.c:1136
-msgid "Leave fullscreen"
+#: ../src/virt-viewer-window.c:1464
+msgid "Will be forced to close the desktop, Confirm or not?"
+msgstr "将会强制关闭桌面，是否确认?"
+
+#: ../src/virt-viewer-window.c:1512
+msgid "Close Window"
+msgstr "退出窗口"
+
+#: ../src/virt-viewer-window.c:1512 ../src/virt-viewer-window.c:2238
+msgid "Close Client"
+msgstr "退出客户端"
+
+#: ../src/virt-viewer-window.c:1523
+
+msgid "Do you want to close the window?"
+msgstr "你确定退出窗口么?"
+
+#: ../src/virt-viewer-window.c:1524
+
+msgid "Do you want to close the client?"
+msgstr "你确定退出客户端么?"
+
+#: ../src/virt-viewer-window.c:1707
+
+msgid "Configure USB device to enable redirection in boot"
+msgstr "配置USB设备开机自动重定向"
+
+#: ../src/virt-viewer-window.c:1719
+msgid ""
+"Once checking, the device will connect to desktop automatically in next "
+"desktop boot."
+msgstr "勾选后，下一次桌面开机，设备将自动接入到桌面内."
+
+#: ../src/virt-viewer-window.c:1841
+
+msgid "USB redirection error"
+msgstr "USB 重新定向错误"
+
+#: ../src/virt-viewer-window.c:1859
+msgid "_Close"
+msgstr "_关闭"
+
+#: ../src/virt-viewer-window.c:1931
+msgid "incorrect password!"
+msgstr "密码错误"
+
+#: ../src/virt-viewer-window.c:1947
+msgid "Verification"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2027
+msgid "enable toolbar"
+msgstr "验证"
+
+#: ../src/virt-viewer-window.c:2029
+msgid "is mode VM"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2031
+#, fuzzy
+msgid "Force in a fullscreen mode"
 msgstr "离开全屏"
 
-#: ../src/virt-viewer-window.c:1218
-msgid "Ctrl+Alt"
-msgstr "Ctrl+Alt"
+#: ../src/virt-viewer-window.c:2033
+msgid "require password when exit"
+msgstr ""
 
-#: ../src/virt-viewer-window.c:1221
+#: ../src/virt-viewer-window.c:2035
+#, fuzzy
+msgid "Set the window title"
+msgstr "设置窗口标题"
+
+#: ../src/virt-viewer-window.c:2142 ../src/virt-viewer-window.c:2280
+msgid "Switch Mouse Mode"
+msgstr "切换鼠标模式"
+
+#: ../src/virt-viewer-window.c:2153
+msgid ""
+"Mouse switches between server mode and client side mode, please do this when "
+"mouse is abnormal, you can switch with shortcut key (Shift+F11)."
+msgstr ""
+"鼠标将在服务端模式与客户端模式之间切换，请在鼠标异常的情况下进行此操作，可以"
+"使用快捷键(Shift+F11)切换"
+
+#: ../src/virt-viewer-window.c:2245
+
+msgid "Exit Fullscreen"
+msgstr "退出全屏"
+
+#: ../src/virt-viewer-window.c:2268
+msgid "Exit Desktop"
+msgstr "退出桌面"
+
+#: ../src/virt-viewer-window.c:2291
+
+msgid "Send Ctrl+Alt+Delete"
+msgstr "发送 Ctrl+Alt+Delete"
+
+#: ../src/virt-viewer-window.c:2307
+
+msgid "Select usb redirection"
+msgstr "选择USB设备"
+
+#: ../src/virt-viewer-window.c:2308
+msgid "Configure automatic redirection"
+msgstr "配置自动重定向"
+
+#: ../src/virt-viewer-window.c:2321
+msgid "USB"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2434
+msgid "Shift_L+F11"
+msgstr ""
+
+#: ../src/virt-viewer-window.c:2437
 #, c-format
 msgid "(Press %s to release pointer)"
 msgstr "(按 %s 释放光标)"
@@ -601,13 +720,13 @@ msgstr "(按 %s 释放光标)"
 #. * This is "<ungrab (or empty)><space (or empty)><subtitle (or empty)> - <appname>"
 #. * Such as: "(Press Ctrl+Alt to release pointer) BigCorpTycoon MOTD - Virt Viewer"
 #.
-#: ../src/virt-viewer-window.c:1232
+#: ../src/virt-viewer-window.c:2448
 #, c-format
 msgid "%s%s%s - %s"
 msgstr "%s%s%s - %s"
 
 #. translators: <space>
-#: ../src/virt-viewer-window.c:1236
+#: ../src/virt-viewer-window.c:2452
 msgid " "
 msgstr " "
 
@@ -684,6 +803,10 @@ msgstr ""
 msgid "_File"
 msgstr "文件（_F）"
 
+#: ../src/virt-viewer.xml.h:3
+msgid "USB device selection"
+msgstr "USB 设备选择"
+
 #: ../src/virt-viewer.xml.h:4
 msgid "Smartcard insertion"
 msgstr "插入智能卡"
@@ -747,3 +870,12 @@ msgstr ""
 #: ../src/virt-viewer-vm-connection.xml.h:3
 msgid "Available virtual machines"
 msgstr ""
+
+#~ msgid "Disconnect"
+#~ msgstr "断开连接"
+
+#~ msgid "Send key combination"
+#~ msgstr "发送按键组合"
+
+#~ msgid "Ctrl+Alt"
+#~ msgstr "Ctrl+Alt"
