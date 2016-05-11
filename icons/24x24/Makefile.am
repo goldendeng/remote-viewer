@@ -2,7 +2,7 @@ EXTRA_DIST =
 size = $(notdir $(PWD))
 
 apps_icondir = $(datadir)/icons/hicolor/$(size)/apps/
-apps_icon_DATA = $(PACKAGE).png tclient-1.png PC-vdi-1.png exit-vdi-1.png mouse-mode-1.png power-off-vdi-1.png send-alt-1.png usb-redir-1.png gtk-cancel.png close-vdi.png window-vdi.png gtk-close.png
+apps_icon_DATA = $(PACKAGE).png rtclient-1.png rPC-vdi-1.png rexit-vdi-1.png rmouse-mode-1.png rpower-off-vdi-1.png rsend-alt-1.png rusb-redir-1.png rgtk-cancel.png rclose-vdi.png rwindow-vdi.png rgtk-close.png
 EXTRA_DIST += $(apps_icon_DATA)
 
 devices_icondir = $(datadir)/icons/hicolor/$(size)/devices/

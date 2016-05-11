@@ -90,11 +90,9 @@ G_END_DECLS
 
 #if defined(G_OS_WIN32)
 #define CONTROLL_VERSION  1
-typedef struct ControllerMsg {
-    uint32_t version;
-    uint32_t id;
-    uint32_t result;
-} ControllerMsg;
+#include <windows.h>
+#include <io.h>
+
 
 typedef struct _USBFILTERSET{
     ControllerMsg header;

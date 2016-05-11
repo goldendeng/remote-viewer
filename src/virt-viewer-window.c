@@ -59,6 +59,7 @@
 #include <windows.h>
 #define PIPE_NAME TEXT("\\\\.\\pipe\\SpiceController-500")
 static HANDLE pipe = INVALID_HANDLE_VALUE;
+#include <io.h>
 #endif
 
 
@@ -1323,6 +1324,20 @@ int write_to_pipe (const void* data, size_t len)
     
     return 1;
 }
+
+typedef struct ControllerMsg {
+    uint32_t version;
+    uint32_t id;
+    uint32_t result;
+} ControllerMsg;
+
+typedef struct _USBFILTERSET{
+    ControllerMsg header;
+    DWORD nCount;
+    unsigned short vid;
+    unsigned short pid;
+}UsbFilterSet;
+
 int send_usb_value(uint32_t id, unsigned short vid, unsigned short pid)
 {
     UsbFilterSet usbFilterSet = {
