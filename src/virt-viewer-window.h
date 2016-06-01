@@ -94,12 +94,7 @@ G_END_DECLS
 #include <io.h>
 
 
-typedef struct _USBFILTERSET{
-    ControllerMsg header;
-    DWORD nCount;
-    unsigned short vid;
-    unsigned short pid;
-}UsbFilterSet;
+
 
 
 typedef BOOL (WINAPI *ChangeWindowMessageFilter)(UINT message, DWORD dwFlag);

@@ -452,6 +452,18 @@ virt_viewer_window_init (VirtViewerWindow *self)
 
     priv->zoomlevel = 100;
 
+//pipo
+
+#if defined(G_OS_WIN32)
+    gtk_window_set_default_icon_name("rtclient");
+    int ret = open_pipe();
+    if(ret<0)
+    {
+        g_warning("open pipe error!");
+    }
+#endif
+
+
 //usb
 
 #if GTK_CHECK_VERSION(3,0,0)
